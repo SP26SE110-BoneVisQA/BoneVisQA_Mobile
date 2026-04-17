@@ -33,15 +33,10 @@ async function clearPersisted(): Promise<void> {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  token: 'mock-token',
-  user: { 
-    id: 'mock-id', 
-    email: 'test@example.com', 
-    fullName: 'Test User', 
-    role: 'Student' 
-  },
-  isHydrated: true,
-  isAuthenticated: true,
+  token: null,
+  user: null,
+  isHydrated: false,
+  isAuthenticated: false,
   login: async (token, user) => {
     await persistToken(token);
     await persistUser(user);
@@ -67,9 +62,19 @@ export const useAuthStore = create<AuthState>((set) => ({
         });
         return;
       }
-      set({ isHydrated: true });
+      set({ 
+        token: null, 
+        user: null, 
+        isAuthenticated: false, 
+        isHydrated: true 
+      });
     } catch {
-      set({ isHydrated: true });
+      set({ 
+        token: null, 
+        user: null, 
+        isAuthenticated: false, 
+        isHydrated: true 
+      });
     }
   },
   setUser: (user) => set({ user }),

@@ -31,7 +31,17 @@
       "expo-localization"
     ],
     "extra": {
-      "apiBaseUrl": "https://bonevisqa.onrender.com"
+      "apiBaseUrl": "https://bonevisqa.onrender.com",
+      "eas": {
+        "projectId": "13e90e2c-8029-4dd2-9271-87fd827db689"
+      }
+    },
+    "owner": "doanminhtien",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/13e90e2c-8029-4dd2-9271-87fd827db689"
     }
   }
 }
