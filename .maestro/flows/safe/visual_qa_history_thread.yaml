@@ -3,7 +3,7 @@ name: Visual QA - history thread and review entry without request
 ---
 - runFlow: ../../helpers/login_student.yaml
 - tapOn: "Ca lâm sàng"
-- tapOn: "Hỏi đáp hình ảnh"
+- tapOn: "Lịch sử AI"
 - extendedWaitUntil:
     visible: "Lịch sử Visual QA"
     timeout: 20000
