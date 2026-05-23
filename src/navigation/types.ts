@@ -59,4 +59,6 @@ export type ProfileStackParamList = {
   Settings: undefined;
   ChangePassword: undefined;
   MedicalVerification: undefined;
+  Classes: undefined;
+  ClassDetail: { classId: string };
 };

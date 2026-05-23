@@ -1,0 +1,16 @@
+appId: com.doanminhtien.mobile
+name: Classes - list and detail without leaving
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Hồ sơ"
+- tapOn: "Lớp học"
+- extendedWaitUntil:
+    visible: "Lớp học của tôi"
+    timeout: 20000
+- tapOn: ${E2E_CLASS_TITLE}
+- extendedWaitUntil:
+    visible: "Chi tiết lớp"
+    timeout: 20000
+- assertVisible: ${E2E_CLASS_TITLE}
+- assertVisible: "Bài tập"
+- assertVisible: "Rời lớp"

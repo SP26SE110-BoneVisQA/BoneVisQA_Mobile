@@ -1,0 +1,15 @@
+appId: com.doanminhtien.mobile
+name: Opt-in - verify leave class confirmation and cancel
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Hồ sơ"
+- tapOn: "Lớp học"
+- tapOn: ${E2E_CLASS_TITLE}
+- extendedWaitUntil:
+    visible: "Rời lớp"
+    timeout: 20000
+- tapOn: "Rời lớp"
+- assertVisible: "Bạn có chắc muốn rời lớp?"
+- tapOn: "Hủy"
+- assertVisible: ${E2E_CLASS_TITLE}
+- assertVisible: "Rời lớp"
