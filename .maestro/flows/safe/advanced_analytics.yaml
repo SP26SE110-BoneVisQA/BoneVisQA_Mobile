@@ -1,0 +1,50 @@
+appId: com.doanminhtien.mobile
+name: Analytics - advanced student performance sections
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Quiz"
+- tapOn: "Tiến độ"
+- extendedWaitUntil:
+    visible: "Tiến độ học tập"
+    timeout: 20000
+- tapOn: "Xem phân tích chi tiết"
+- extendedWaitUntil:
+    visible: "Hiệu suất tổng thể"
+    timeout: 20000
+- assertVisible: "Điểm TB"
+- assertVisible: "Câu hỏi AI"
+- scrollUntilVisible:
+    element:
+      text: "Điểm trung bình theo tuần"
+    direction: DOWN
+- assertVisible: "Điểm trung bình theo tuần"
+- scrollUntilVisible:
+    element:
+      text: "Điểm mạnh"
+    direction: DOWN
+- assertVisible: "Điểm mạnh"
+- scrollUntilVisible:
+    element:
+      text: "Cần cải thiện"
+    direction: DOWN
+- assertVisible: "Cần cải thiện"
+- scrollUntilVisible:
+    element:
+      text: "Phân tích nâng cao"
+    direction: DOWN
+- assertVisible: "Phân tích nâng cao"
+- scrollUntilVisible:
+    element:
+      text: "Năng lực"
+    direction: DOWN
+- assertVisible: "Năng lực"
+- scrollUntilVisible:
+    element:
+      text: "Lỗi lặp lại"
+    direction: DOWN
+- assertVisible: "Lỗi lặp lại"
+- scrollUntilVisible:
+    element:
+      text: "Gợi ý cá nhân"
+    direction: DOWN
+- assertVisible: "Gợi ý cá nhân"

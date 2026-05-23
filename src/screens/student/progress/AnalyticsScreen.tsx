@@ -4,11 +4,21 @@ import { BookOpen, MessageSquare, Trophy, TrendingUp } from 'lucide-react-native
 
 import Screen from '../../../components/common/Screen';
 import Card from '../../../components/common/Card';
+import Button from '../../../components/common/Button';
 import Loading from '../../../components/common/Loading';
 import ErrorView from '../../../components/common/ErrorView';
 import EmptyState from '../../../components/common/EmptyState';
 import StatCard from '../../../components/quiz/StatCard';
 import { useAnalytics } from '../../../hooks/useQuiz';
+import {
+  useActionInsight,
+  useCompetencies,
+  useErrorPatterns,
+  useInsights,
+  useMarkInsightRead,
+  useResolveErrorPattern,
+  useStudentDashboard,
+} from '../../../hooks/useStudentAnalytics';
 import type { WeeklyScorePoint } from '../../../types/quiz';
 
 interface BarChartProps {
@@ -74,6 +84,13 @@ function ChipRow({ items, tone, emptyLabel }: ChipRowProps): React.ReactElement 
 
 export default function AnalyticsScreen(): React.ReactElement {
   const { data, isLoading, isError, error, refetch } = useAnalytics();
+  const dashboard = useStudentDashboard();
+  const competencies = useCompetencies();
+  const patterns = useErrorPatterns();
+  const insights = useInsights();
+  const markRead = useMarkInsightRead();
+  const actionInsight = useActionInsight();
+  const resolvePattern = useResolveErrorPattern();
 
   if (isLoading) {
     return (
@@ -166,6 +183,134 @@ export default function AnalyticsScreen(): React.ReactElement {
           Cần cải thiện
         </Text>
         <ChipRow items={data.weaknesses} tone="rose" emptyLabel="Chưa xác định" />
+      </Card>
+
+      <Text className="text-xl font-bold text-slate-900 dark:text-white mt-2 mb-3">
+        Phân tích nâng cao
+      </Text>
+
+      <Card className="mb-4">
+        <Text className="text-base font-semibold text-slate-900 dark:text-white mb-2">
+          Tổng quan học tập
+        </Text>
+        {dashboard.isLoading ? (
+          <Loading text="Đang tải tổng quan..." />
+        ) : dashboard.isError ? (
+          <Text className="text-xs text-slate-500">Không thể tải tổng quan lúc này.</Text>
+        ) : (
+          <View>
+            {dashboard.data?.title ? (
+              <Text className="text-sm text-slate-700 mb-2">{dashboard.data.title}</Text>
+            ) : null}
+            <View className="flex-row gap-4">
+              {typeof dashboard.data?.completionRate === 'number' ? (
+                <Text className="text-xs text-slate-600">
+                  Hoàn thành: {dashboard.data.completionRate.toFixed(0)}%
+                </Text>
+              ) : null}
+              {typeof dashboard.data?.accuracyRate === 'number' ? (
+                <Text className="text-xs text-slate-600">
+                  Chính xác: {dashboard.data.accuracyRate.toFixed(0)}%
+                </Text>
+              ) : null}
+            </View>
+            {dashboard.data?.focusMessage ? (
+              <Text className="text-sm text-primary mt-3">{dashboard.data.focusMessage}</Text>
+            ) : null}
+          </View>
+        )}
+      </Card>
+
+      <Card className="mb-4">
+        <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
+          Năng lực
+        </Text>
+        {competencies.isLoading ? (
+          <Loading text="Đang tải năng lực..." />
+        ) : (competencies.data ?? []).length === 0 ? (
+          <Text className="text-xs text-slate-500">Chưa có dữ liệu năng lực.</Text>
+        ) : (
+          competencies.data?.map((item) => (
+            <View key={item.id} className="flex-row justify-between py-2">
+              <Text className="text-sm text-slate-700">{item.name}</Text>
+              <Text className="text-sm font-semibold text-primary">
+                {typeof item.score === 'number' ? `${item.score.toFixed(0)}%` : item.level ?? '-'}
+              </Text>
+            </View>
+          ))
+        )}
+      </Card>
+
+      <Card className="mb-4">
+        <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
+          Lỗi lặp lại
+        </Text>
+        {patterns.isLoading ? (
+          <Loading text="Đang tải mẫu lỗi..." />
+        ) : (patterns.data ?? []).length === 0 ? (
+          <Text className="text-xs text-slate-500">Không có mẫu lỗi cần xử lý.</Text>
+        ) : (
+          patterns.data?.map((pattern) => (
+            <View key={pattern.id} className="border-b border-slate-100 py-2">
+              <Text className="text-sm font-semibold text-slate-800">{pattern.title}</Text>
+              {pattern.description ? (
+                <Text className="text-xs text-slate-500 mt-1">{pattern.description}</Text>
+              ) : null}
+              {!pattern.resolved ? (
+                <View className="mt-2 self-start">
+                  <Button
+                    label="Đánh dấu đã xử lý"
+                    size="sm"
+                    variant="outline"
+                    loading={resolvePattern.isPending}
+                    onPress={() => resolvePattern.mutate(pattern.id)}
+                  />
+                </View>
+              ) : (
+                <Text className="text-xs text-emerald-600 mt-1">Đã xử lý</Text>
+              )}
+            </View>
+          ))
+        )}
+      </Card>
+
+      <Card className="mb-4">
+        <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
+          Gợi ý cá nhân
+        </Text>
+        {insights.isLoading ? (
+          <Loading text="Đang tải gợi ý..." />
+        ) : (insights.data ?? []).length === 0 ? (
+          <Text className="text-xs text-slate-500">Chưa có gợi ý mới.</Text>
+        ) : (
+          insights.data?.map((insight) => (
+            <View key={insight.id} className="border-b border-slate-100 py-2">
+              <Text className="text-sm font-semibold text-slate-800">{insight.title}</Text>
+              {insight.description ? (
+                <Text className="text-xs text-slate-500 mt-1">{insight.description}</Text>
+              ) : null}
+              <View className="flex-row gap-2 mt-2">
+                {!insight.isRead ? (
+                  <Button
+                    label="Đã đọc"
+                    size="sm"
+                    variant="outline"
+                    loading={markRead.isPending}
+                    onPress={() => markRead.mutate(insight.id)}
+                  />
+                ) : null}
+                {!insight.isActioned ? (
+                  <Button
+                    label={insight.actionLabel ?? 'Thực hiện'}
+                    size="sm"
+                    loading={actionInsight.isPending}
+                    onPress={() => actionInsight.mutate(insight.id)}
+                  />
+                ) : null}
+              </View>
+            </View>
+          ))
+        )}
       </Card>
     </Screen>
   );
