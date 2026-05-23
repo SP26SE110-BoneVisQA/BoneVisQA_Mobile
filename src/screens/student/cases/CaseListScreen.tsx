@@ -85,12 +85,20 @@ export default function CaseListScreen(): React.ReactElement {
     navigation.setOptions({
       title: 'Ca lâm sàng',
       headerRight: () => (
-        <Pressable
-          onPress={() => navigation.navigate('CaseHistory')}
-          className="px-2"
-        >
-          <History size={22} color="#0f766e" />
-        </Pressable>
+        <View className="flex-row items-center">
+          <Pressable
+            onPress={() => navigation.navigate('VisualQaHistory')}
+            className="px-2"
+          >
+            <Text className="text-primary font-semibold text-xs">Hỏi đáp hình ảnh</Text>
+          </Pressable>
+          <Pressable
+            onPress={() => navigation.navigate('CaseHistory')}
+            className="px-2"
+          >
+            <History size={22} color="#0f766e" />
+          </Pressable>
+        </View>
       ),
     });
   }, [navigation]);

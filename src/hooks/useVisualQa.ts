@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { askJson, askMultipart } from '../api/visualQa';
-import { createQuestion } from '../api/questions';
 import type { VisualQaMessage } from '../types/case';
 
 function makeId(prefix: string): string {
@@ -20,9 +19,9 @@ export interface UseVisualQaResult {
   seed: (messages: VisualQaMessage[]) => void;
 }
 
-export function useVisualQa(caseId?: string): UseVisualQaResult {
+export function useVisualQa(caseId?: string, sessionId?: string): UseVisualQaResult {
   const queryClient = useQueryClient();
-  const key = ['visualqa', caseId ?? 'general'] as const;
+  const key = ['visualqa', sessionId ?? caseId ?? 'general'] as const;
 
   const { data: messages = [] } = useQuery<VisualQaMessage[]>({
     queryKey: key,
@@ -65,8 +64,8 @@ export function useVisualQa(caseId?: string): UseVisualQaResult {
 
       try {
         const result = imageUri
-          ? await askMultipart({ caseId, question, imageUri })
-          : await askJson({ caseId, question });
+          ? await askMultipart({ question, imageUri, sessionId })
+          : await askJson({ caseId, question, sessionId });
 
         setMessages((prev) =>
           prev.map((m) =>
@@ -75,19 +74,14 @@ export function useVisualQa(caseId?: string): UseVisualQaResult {
                   ...m,
                   content: result.answer,
                   references: result.references,
+                  turnId: result.latestTurn?.id,
+                  reviewState: result.reviewState,
                   isLoading: false,
                   createdAt: nowIso(),
                 }
               : m,
           ),
         );
-
-        // Best-effort persistence — swallow errors.
-        try {
-          await createQuestion({ caseId, question });
-        } catch {
-          // ignore
-        }
       } catch (error) {
         const message =
           error && typeof error === 'object' && 'message' in error
@@ -108,7 +102,7 @@ export function useVisualQa(caseId?: string): UseVisualQaResult {
         );
       }
     },
-    [caseId, setMessages],
+    [caseId, sessionId, setMessages],
   );
 
   const clear = useCallback((): void => {
