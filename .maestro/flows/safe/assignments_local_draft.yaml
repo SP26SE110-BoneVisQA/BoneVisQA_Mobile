@@ -1,0 +1,24 @@
+appId: com.doanminhtien.mobile
+name: Assignments - open mock detail and restore local draft
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Bài tập"
+- extendedWaitUntil:
+    visible: "Bài tự luận"
+    timeout: 20000
+- tapOn: ${E2E_ASSIGNMENT_TITLE}
+- extendedWaitUntil:
+    visible: "Bài làm"
+    timeout: 20000
+- tapOn: "Nhập câu trả lời tự luận..."
+- inputText: "Maestro local draft only - do not submit"
+- hideKeyboard
+- extendedWaitUntil:
+    visible: "Đã lưu nháp"
+    timeout: 5000
+- back
+- tapOn: ${E2E_ASSIGNMENT_TITLE}
+- extendedWaitUntil:
+    visible: "Maestro local draft only - do not submit"
+    timeout: 10000
+- assertVisible: "Đã khôi phục nháp"
