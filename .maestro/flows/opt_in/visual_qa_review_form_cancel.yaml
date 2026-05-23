@@ -3,7 +3,7 @@ name: Opt-in - open review request form without sending
 ---
 - runFlow: ../../helpers/login_student.yaml
 - tapOn: "Ca lâm sàng"
-- tapOn: "Hỏi đáp hình ảnh"
+- tapOn: "Lịch sử AI"
 - tapOn: ${E2E_VISUAL_QA_THREAD_TITLE}
 - extendedWaitUntil:
     visible: "Yêu cầu review"

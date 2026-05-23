@@ -87,10 +87,16 @@ export default function CaseListScreen(): React.ReactElement {
       headerRight: () => (
         <View className="flex-row items-center">
           <Pressable
+            onPress={() => navigation.navigate('VisualQaAsk', {})}
+            className="px-2"
+          >
+            <Text className="text-primary font-semibold text-xs">Hỏi AI</Text>
+          </Pressable>
+          <Pressable
             onPress={() => navigation.navigate('VisualQaHistory')}
             className="px-2"
           >
-            <Text className="text-primary font-semibold text-xs">Hỏi đáp hình ảnh</Text>
+            <Text className="text-primary font-semibold text-xs">Lịch sử AI</Text>
           </Pressable>
           <Pressable
             onPress={() => navigation.navigate('CaseHistory')}

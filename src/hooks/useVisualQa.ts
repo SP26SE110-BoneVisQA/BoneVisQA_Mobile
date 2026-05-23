@@ -1,7 +1,7 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { askJson, askMultipart } from '../api/visualQa';
-import type { VisualQaMessage } from '../types/case';
+import type { VisualQaCapabilities, VisualQaMessage } from '../types/case';
 
 function makeId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -15,13 +15,32 @@ export interface UseVisualQaResult {
   messages: VisualQaMessage[];
   ask: (question: string, imageUri?: string) => Promise<void>;
   isLoading: boolean;
+  capabilities?: VisualQaCapabilities;
   clear: () => void;
   seed: (messages: VisualQaMessage[]) => void;
 }
 
-export function useVisualQa(caseId?: string, sessionId?: string): UseVisualQaResult {
+export function useVisualQa(
+  caseId?: string,
+  sessionId?: string,
+  initialCapabilities?: VisualQaCapabilities,
+): UseVisualQaResult {
   const queryClient = useQueryClient();
   const key = ['visualqa', sessionId ?? caseId ?? 'general'] as const;
+  const sessionIdRef = useRef<string | undefined>(sessionId);
+  const [capabilities, setCapabilities] = useState<VisualQaCapabilities | undefined>(
+    initialCapabilities,
+  );
+
+  useEffect(() => {
+    sessionIdRef.current = sessionId;
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (initialCapabilities) {
+      setCapabilities(initialCapabilities);
+    }
+  }, [initialCapabilities]);
 
   const { data: messages = [] } = useQuery<VisualQaMessage[]>({
     queryKey: key,
@@ -64,8 +83,19 @@ export function useVisualQa(caseId?: string, sessionId?: string): UseVisualQaRes
 
       try {
         const result = imageUri
-          ? await askMultipart({ question, imageUri, sessionId })
-          : await askJson({ caseId, question, sessionId });
+          ? await askMultipart({
+              question,
+              imageUri,
+              sessionId: sessionIdRef.current,
+            })
+          : await askJson({
+              caseId,
+              question,
+              sessionId: sessionIdRef.current,
+            });
+
+        sessionIdRef.current = result.sessionId ?? sessionIdRef.current;
+        setCapabilities(result.capabilities);
 
         setMessages((prev) =>
           prev.map((m) =>
@@ -102,7 +132,7 @@ export function useVisualQa(caseId?: string, sessionId?: string): UseVisualQaRes
         );
       }
     },
-    [caseId, sessionId, setMessages],
+    [caseId, setMessages],
   );
 
   const clear = useCallback((): void => {
@@ -116,7 +146,7 @@ export function useVisualQa(caseId?: string, sessionId?: string): UseVisualQaRes
     [setMessages],
   );
 
-  return { messages, ask, isLoading, clear, seed };
+  return { messages, ask, isLoading, capabilities, clear, seed };
 }
 
 export default useVisualQa;

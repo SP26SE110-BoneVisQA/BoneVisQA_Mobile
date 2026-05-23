@@ -14,6 +14,7 @@ import Screen from '../../../components/common/Screen';
 import Loading from '../../../components/common/Loading';
 import ErrorView from '../../../components/common/ErrorView';
 import EmptyState from '../../../components/common/EmptyState';
+import Button from '../../../components/common/Button';
 import CaseImageGallery from '../../../components/cases/CaseImageGallery';
 import { getCase } from '../../../api/cases';
 import type { ApiError } from '../../../types/api';
@@ -199,6 +200,25 @@ export default function CaseDetailScreen(): React.ReactElement {
       <View className="flex-1">
         {tab === 'info' ? <InfoTab caseItem={caseItem} /> : null}
         {tab === 'images' ? <ImagesTab caseItem={caseItem} /> : null}
+      </View>
+      <View className="px-5 py-3 border-t border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+        <View className="flex-row gap-3">
+          <View className="flex-1">
+            <Button
+              label="Hỏi AI về ca này"
+              onPress={() => navigation.navigate('VisualQaChat', { caseId })}
+              fullWidth
+            />
+          </View>
+          <View className="flex-1">
+            <Button
+              label="Hỏi nhanh"
+              variant="outline"
+              onPress={() => navigation.navigate('VisualQaAsk', { caseId })}
+              fullWidth
+            />
+          </View>
+        </View>
       </View>
     </Screen>
   );

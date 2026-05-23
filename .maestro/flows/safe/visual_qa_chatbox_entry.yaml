@@ -1,0 +1,12 @@
+appId: com.doanminhtien.mobile
+name: Visual QA - open optional image chatbox
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Ca lâm sàng"
+- tapOn: "Hỏi AI"
+- extendedWaitUntil:
+    visible: "Hỏi AI nhanh"
+    timeout: 20000
+- assertVisible: "Câu hỏi"
+- assertVisible: "Hình ảnh (tuỳ chọn)"
+- assertVisible: "Hỏi AI"
