@@ -100,6 +100,12 @@ export default function ProfileScreen(): React.ReactElement {
       onPress: () => navigation.navigate('MedicalVerification'),
     },
     {
+      key: 'classes',
+      label: 'Lớp học',
+      icon: <Users size={20} color="#14b8a6" />,
+      onPress: () => navigation.navigate('Classes'),
+    },
+    {
       key: 'settings',
       label: 'Cài đặt',
       icon: <SettingsIcon size={20} color="#14b8a6" />,
@@ -194,7 +200,7 @@ export default function ProfileScreen(): React.ReactElement {
             icon={<GraduationCap size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Lớp"
+            label="Lớp học"
             value={data.classCode}
             icon={<Users size={16} color="#14b8a6" />}
           />

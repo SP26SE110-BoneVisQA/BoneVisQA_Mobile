@@ -38,6 +38,8 @@ import EditProfileScreen from '../screens/student/profile/EditProfileScreen';
 import MedicalVerificationScreen from '../screens/student/profile/MedicalVerificationScreen';
 import SettingsScreen from '../screens/student/settings/SettingsScreen';
 import ChangePasswordScreen from '../screens/student/settings/ChangePasswordScreen';
+import ClassListScreen from '../screens/student/classes/ClassListScreen';
+import ClassDetailScreen from '../screens/student/classes/ClassDetailScreen';
 
 import type {
   AppTabParamList,
@@ -193,6 +195,16 @@ function ProfileStackNavigator(): React.ReactElement {
         name="MedicalVerification"
         component={MedicalVerificationScreen}
         options={{ headerShown: true, title: 'Xác minh y tế' }}
+      />
+      <ProfileStack.Screen
+        name="Classes"
+        component={ClassListScreen}
+        options={{ headerShown: true, title: 'Lớp học' }}
+      />
+      <ProfileStack.Screen
+        name="ClassDetail"
+        component={ClassDetailScreen}
+        options={{ headerShown: true, title: 'Chi tiết lớp' }}
       />
     </ProfileStack.Navigator>
   );
