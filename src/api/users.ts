@@ -6,14 +6,14 @@ import type {
 } from '../types/user';
 
 export async function getMe(): Promise<StudentProfile> {
-  const { data } = await api.get<StudentProfile>('/api/users/me');
+  const { data } = await api.get<StudentProfile>('/api/profile');
   return data;
 }
 
 export async function updateMe(
   dto: UpdateStudentProfileDto,
 ): Promise<StudentProfile> {
-  const { data } = await api.put<StudentProfile>('/api/users/me', dto);
+  const { data } = await api.put<StudentProfile>('/api/profile', dto);
   return data;
 }
 
@@ -42,7 +42,7 @@ export async function uploadAvatar(
   // React Native FormData accepts { uri, name, type } as a file part.
   formData.append('file', filePart as unknown as Blob);
   const { data } = await api.post<{ avatarUrl: string }>(
-    '/api/users/me/avatar',
+    '/api/profile/avatar',
     formData,
     {
       headers: { 'Content-Type': 'multipart/form-data' },

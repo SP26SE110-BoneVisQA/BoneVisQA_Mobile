@@ -1,3 +1,5 @@
+import type { NavigatorScreenParams } from '@react-navigation/native';
+
 export type RootStackParamList = {
   Auth: undefined;
   App: undefined;
@@ -12,6 +14,7 @@ export type AuthStackParamList = {
 export type AppTabParamList = {
   HomeTab: undefined;
   QuizTab: undefined;
+  AssignmentsTab: NavigatorScreenParams<AssignmentsStackParamList> | undefined;
   CasesTab: undefined;
   NotificationsTab: undefined;
   ProfileTab: undefined;
@@ -37,6 +40,13 @@ export type CasesStackParamList = {
   CaseList: undefined;
   CaseDetail: { caseId: string };
   CaseHistory: undefined;
+  VisualQaAsk: { caseId?: string };
+  VisualQaChat: { caseId?: string };
+};
+
+export type AssignmentsStackParamList = {
+  AssignmentList: undefined;
+  AssignmentDetail: { assignmentId: string };
 };
 
 export type NotificationsStackParamList = {

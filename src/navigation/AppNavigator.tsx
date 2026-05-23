@@ -1,7 +1,14 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Bell, BookOpen, FileText, Home, User } from 'lucide-react-native';
+import {
+  Bell,
+  BookOpen,
+  ClipboardList,
+  FileText,
+  Home,
+  User,
+} from 'lucide-react-native';
 
 import HomeScreen from '../screens/student/home/HomeScreen';
 import SearchScreen from '../screens/student/search/SearchScreen';
@@ -15,9 +22,14 @@ import PracticeModeScreen from '../screens/student/quiz/PracticeModeScreen';
 import ProgressScreen from '../screens/student/progress/ProgressScreen';
 import AnalyticsScreen from '../screens/student/progress/AnalyticsScreen';
 
+import AssignmentListScreen from '../screens/student/assignments/AssignmentListScreen';
+import AssignmentDetailScreen from '../screens/student/assignments/AssignmentDetailScreen';
+
 import CaseListScreen from '../screens/student/cases/CaseListScreen';
 import CaseDetailScreen from '../screens/student/cases/CaseDetailScreen';
 import CaseHistoryScreen from '../screens/student/cases/CaseHistoryScreen';
+import AskScreen from '../screens/student/visualQa/AskScreen';
+import ChatScreen from '../screens/student/visualQa/ChatScreen';
 
 import NotificationsScreen from '../screens/student/notifications/NotificationsScreen';
 
@@ -29,6 +41,7 @@ import ChangePasswordScreen from '../screens/student/settings/ChangePasswordScre
 
 import type {
   AppTabParamList,
+  AssignmentsStackParamList,
   CasesStackParamList,
   HomeStackParamList,
   NotificationsStackParamList,
@@ -96,6 +109,24 @@ function QuizStackNavigator(): React.ReactElement {
   );
 }
 
+const AssignmentsStack =
+  createNativeStackNavigator<AssignmentsStackParamList>();
+function AssignmentsStackNavigator(): React.ReactElement {
+  return (
+    <AssignmentsStack.Navigator screenOptions={{ headerShown: false }}>
+      <AssignmentsStack.Screen
+        name="AssignmentList"
+        component={AssignmentListScreen}
+      />
+      <AssignmentsStack.Screen
+        name="AssignmentDetail"
+        component={AssignmentDetailScreen}
+        options={{ headerShown: true, title: 'Assignment' }}
+      />
+    </AssignmentsStack.Navigator>
+  );
+}
+
 const CasesStack = createNativeStackNavigator<CasesStackParamList>();
 function CasesStackNavigator(): React.ReactElement {
   return (
@@ -110,6 +141,16 @@ function CasesStackNavigator(): React.ReactElement {
         name="CaseHistory"
         component={CaseHistoryScreen}
         options={{ headerShown: true, title: 'Lịch sử ca' }}
+      />
+      <CasesStack.Screen
+        name="VisualQaAsk"
+        component={AskScreen}
+        options={{ headerShown: true, title: 'Hỏi AI nhanh' }}
+      />
+      <CasesStack.Screen
+        name="VisualQaChat"
+        component={ChatScreen}
+        options={{ headerShown: true, title: 'Hỏi AI X-quang' }}
       />
     </CasesStack.Navigator>
   );
@@ -185,6 +226,16 @@ export default function AppNavigator(): React.ReactElement {
           title: 'Quiz',
           tabBarIcon: ({ color, size }) => (
             <BookOpen color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AssignmentsTab"
+        component={AssignmentsStackNavigator}
+        options={{
+          title: 'Bài tập',
+          tabBarIcon: ({ color, size }) => (
+            <ClipboardList color={color} size={size} />
           ),
         }}
       />

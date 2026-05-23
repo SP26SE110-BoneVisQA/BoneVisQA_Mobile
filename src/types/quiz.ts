@@ -133,7 +133,7 @@ export interface Analytics {
   averageQuizScore?: number;
 }
 
-export type AssignmentStatus = 'pending' | 'overdue' | 'completed';
+export type AssignmentStatus = 'pending' | 'overdue' | 'submitted' | 'graded';
 
 export interface Assignment {
   id: string;
@@ -142,7 +142,13 @@ export interface Assignment {
   className?: string;
   title: string;
   type?: string;
+  description?: string;
+  instructions?: string;
   dueDate?: string;
+  submittedAt?: string;
+  answerText?: string;
+  score?: number;
+  feedback?: string;
   status: AssignmentStatus;
 }
 
