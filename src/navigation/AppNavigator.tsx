@@ -30,6 +30,8 @@ import CaseDetailScreen from '../screens/student/cases/CaseDetailScreen';
 import CaseHistoryScreen from '../screens/student/cases/CaseHistoryScreen';
 import AskScreen from '../screens/student/visualQa/AskScreen';
 import ChatScreen from '../screens/student/visualQa/ChatScreen';
+import VisualQaHistoryScreen from '../screens/student/visualQa/VisualQaHistoryScreen';
+import VisualQaThreadScreen from '../screens/student/visualQa/VisualQaThreadScreen';
 
 import NotificationsScreen from '../screens/student/notifications/NotificationsScreen';
 
@@ -133,7 +135,11 @@ const CasesStack = createNativeStackNavigator<CasesStackParamList>();
 function CasesStackNavigator(): React.ReactElement {
   return (
     <CasesStack.Navigator screenOptions={{ headerShown: false }}>
-      <CasesStack.Screen name="CaseList" component={CaseListScreen} />
+      <CasesStack.Screen
+        name="CaseList"
+        component={CaseListScreen}
+        options={{ headerShown: true, title: 'Ca lâm sàng' }}
+      />
       <CasesStack.Screen
         name="CaseDetail"
         component={CaseDetailScreen}
@@ -153,6 +159,16 @@ function CasesStackNavigator(): React.ReactElement {
         name="VisualQaChat"
         component={ChatScreen}
         options={{ headerShown: true, title: 'Hỏi AI X-quang' }}
+      />
+      <CasesStack.Screen
+        name="VisualQaHistory"
+        component={VisualQaHistoryScreen}
+        options={{ headerShown: true, title: 'Lịch sử Visual QA' }}
+      />
+      <CasesStack.Screen
+        name="VisualQaThread"
+        component={VisualQaThreadScreen}
+        options={{ headerShown: true, title: 'Chi tiết hội thoại' }}
       />
     </CasesStack.Navigator>
   );

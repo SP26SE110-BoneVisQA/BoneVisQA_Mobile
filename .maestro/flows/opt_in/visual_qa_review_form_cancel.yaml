@@ -1,0 +1,15 @@
+appId: com.doanminhtien.mobile
+name: Opt-in - open review request form without sending
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Ca lâm sàng"
+- tapOn: "Hỏi đáp hình ảnh"
+- tapOn: ${E2E_VISUAL_QA_THREAD_TITLE}
+- extendedWaitUntil:
+    visible: "Yêu cầu review"
+    timeout: 20000
+- tapOn: "Yêu cầu review"
+- assertVisible: "Yêu cầu chuyên gia review"
+- assertVisible: "Gửi yêu cầu review"
+- tapOn: "Hủy"
+- assertVisible: "Chi tiết hội thoại"

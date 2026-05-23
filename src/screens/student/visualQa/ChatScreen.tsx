@@ -1,8 +1,9 @@
 import React from 'react';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Pressable, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigation, useRoute, type RouteProp } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { History } from 'lucide-react-native';
 import Screen from '../../../components/common/Screen';
 import ChatList from '../../../components/chat/ChatList';
 import ChatInput from '../../../components/chat/ChatInput';
@@ -19,6 +20,7 @@ export default function ChatScreen(): React.ReactElement {
   const navigation = useNavigation<NavProp>();
   const route = useRoute<ChatRoute>();
   const caseId = route.params?.caseId;
+  const sessionId = route.params?.sessionId;
 
   const { data: caseItem } = useQuery<Case, ApiError>({
     queryKey: ['case', caseId ?? 'none'],
@@ -26,27 +28,34 @@ export default function ChatScreen(): React.ReactElement {
     enabled: Boolean(caseId),
   });
 
-  const { messages, ask, isLoading, seed } = useVisualQa(caseId);
+  const { messages, ask, isLoading, seed } = useVisualQa(caseId, sessionId);
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
       title: caseItem?.title ?? 'Hỏi AI X-quang',
+      headerRight: () => (
+        <Pressable onPress={() => navigation.navigate('VisualQaHistory')} className="px-2">
+          <History size={21} color="#0f766e" />
+        </Pressable>
+      ),
     });
   }, [navigation, caseItem?.title]);
 
   React.useEffect(() => {
-    const greeting = caseItem
+    const greeting = sessionId
+      ? 'Bạn đang tiếp tục một hội thoại Visual QA trước đó. Hãy đặt câu hỏi tiếp theo.'
+      : caseItem
       ? `Xin chào! Tôi có thể giúp bạn phân tích ca **${caseItem.title}**. Hãy đặt câu hỏi về hình ảnh hoặc các dấu hiệu bạn thấy.`
       : 'Xin chào! Tôi có thể giúp bạn phân tích X-quang. Hãy đặt câu hỏi hoặc đính kèm một hình ảnh.';
     seed([
       {
-        id: `greet-${caseId ?? 'general'}`,
+        id: `greet-${sessionId ?? caseId ?? 'general'}`,
         role: 'assistant',
         content: greeting,
         createdAt: new Date().toISOString(),
       },
     ]);
-  }, [caseId, caseItem, seed]);
+  }, [caseId, caseItem, seed, sessionId]);
 
   const handleSend = (text: string, imageUri?: string): void => {
     void ask(text, imageUri);
