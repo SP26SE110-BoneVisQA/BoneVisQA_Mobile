@@ -39,7 +39,9 @@ export const progressKeys = {
 };
 
 export const assignmentKeys = {
+  all: ['assignments'] as const,
   list: () => ['assignments'] as const,
+  detail: (assignmentId: string) => ['assignments', assignmentId] as const,
 };
 
 // --- Queries ---------------------------------------------------------------
@@ -102,6 +104,16 @@ export function useAssignments(): UseQueryResult<Assignment[], ApiError> {
   });
 }
 
+export function useAssignment(
+  assignmentId: string,
+): UseQueryResult<Assignment, ApiError> {
+  return useQuery<Assignment, ApiError>({
+    queryKey: assignmentKeys.detail(assignmentId),
+    queryFn: () => assignmentsApi.getAssignment(assignmentId),
+    enabled: assignmentId.length > 0,
+  });
+}
+
 // --- Mutations -------------------------------------------------------------
 
 export function useStartQuiz(): UseMutationResult<
@@ -141,6 +153,28 @@ export function useGeneratePractice(): UseMutationResult<
 > {
   return useMutation<GeneratedPracticeResult, ApiError, PracticeGenerateDto>({
     mutationFn: (dto) => quizzesApi.generatePractice(dto),
+  });
+}
+
+export function useSubmitAssignment(): UseMutationResult<
+  Assignment,
+  ApiError,
+  { assignmentId: string; answerText: string }
+> {
+  const qc = useQueryClient();
+  return useMutation<
+    Assignment,
+    ApiError,
+    { assignmentId: string; answerText: string }
+  >({
+    mutationFn: ({ assignmentId, answerText }) =>
+      assignmentsApi.submitAssignment(assignmentId, answerText),
+    onSuccess: async (assignment) => {
+      await Promise.all([
+        qc.invalidateQueries({ queryKey: assignmentKeys.list() }),
+        qc.invalidateQueries({ queryKey: assignmentKeys.detail(assignment.id) }),
+      ]);
+    },
   });
 }
 

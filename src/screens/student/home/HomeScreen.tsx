@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -88,9 +88,13 @@ function activityIconColor(type: RecentActivity['type']): string {
 
 interface AssignmentItemProps {
   assignment: Assignment;
+  onPress: () => void;
 }
 
-function AssignmentItem({ assignment }: AssignmentItemProps): React.ReactElement {
+function AssignmentItem({
+  assignment,
+  onPress,
+}: AssignmentItemProps): React.ReactElement {
   const due = assignment.dueDate ? new Date(assignment.dueDate) : null;
   const dueText =
     due && !Number.isNaN(due.getTime())
@@ -102,7 +106,10 @@ function AssignmentItem({ assignment }: AssignmentItemProps): React.ReactElement
       : 'Không xác định';
   const overdue = assignment.status === 'overdue';
   return (
-    <View className="flex-row items-center py-3 border-b border-slate-100 dark:border-slate-700 last:border-b-0">
+    <Pressable
+      onPress={onPress}
+      className="flex-row items-center py-3 border-b border-slate-100 dark:border-slate-700 last:border-b-0"
+    >
       <View
         className={[
           'w-9 h-9 rounded-xl items-center justify-center mr-3',
@@ -119,7 +126,7 @@ function AssignmentItem({ assignment }: AssignmentItemProps): React.ReactElement
           {overdue ? 'Quá hạn · ' : 'Hạn: '} {dueText}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
@@ -185,10 +192,21 @@ export default function HomeScreen(): React.ReactElement {
     parent?.navigate('QuizTab');
   }, [navigation]);
 
-  const goQuizList = useCallback((): void => {
+  const goAssignments = useCallback((): void => {
     const parent = navigation.getParent<TabNavProp>();
-    parent?.navigate('QuizTab');
+    parent?.navigate('AssignmentsTab');
   }, [navigation]);
+
+  const goAssignmentDetail = useCallback(
+    (assignmentId: string): void => {
+      const parent = navigation.getParent<TabNavProp>();
+      parent?.navigate('AssignmentsTab', {
+        screen: 'AssignmentDetail',
+        params: { assignmentId },
+      });
+    },
+    [navigation],
+  );
 
   if (progress.isLoading && !progress.data) {
     return (
@@ -251,7 +269,7 @@ export default function HomeScreen(): React.ReactElement {
           <Text className="text-base font-semibold text-slate-900 dark:text-white">
             Assignments sắp đến hạn
           </Text>
-          <Text className="text-xs text-primary font-semibold" onPress={goQuizList}>
+          <Text className="text-xs text-primary font-semibold" onPress={goAssignments}>
             Xem tất cả
           </Text>
         </View>
@@ -268,7 +286,11 @@ export default function HomeScreen(): React.ReactElement {
         ) : (
           <View>
             {upcomingAssignments.map((a) => (
-              <AssignmentItem key={a.id} assignment={a} />
+              <AssignmentItem
+                key={a.id}
+                assignment={a}
+                onPress={() => goAssignmentDetail(a.id)}
+              />
             ))}
           </View>
         )}
