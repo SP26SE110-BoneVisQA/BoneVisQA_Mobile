@@ -1,0 +1,14 @@
+appId: com.doanminhtien.mobile
+name: Visual QA - history thread and review entry without request
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Ca lâm sàng"
+- tapOn: "Hỏi đáp hình ảnh"
+- extendedWaitUntil:
+    visible: "Lịch sử Visual QA"
+    timeout: 20000
+- tapOn: ${E2E_VISUAL_QA_THREAD_TITLE}
+- extendedWaitUntil:
+    visible: "Chi tiết hội thoại"
+    timeout: 20000
+- assertVisible: "Yêu cầu review"

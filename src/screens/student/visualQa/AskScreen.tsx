@@ -17,7 +17,6 @@ import Screen from '../../../components/common/Screen';
 import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import { askJson, askMultipart } from '../../../api/visualQa';
-import { createQuestion } from '../../../api/questions';
 import type { VisualQaAnswer } from '../../../types/case';
 import type { CasesStackParamList } from '../../../navigation/types';
 
@@ -63,14 +62,9 @@ export default function AskScreen(): React.ReactElement {
     setErrorText(null);
     try {
       const result = imageUri
-        ? await askMultipart({ caseId, question: trimmed, imageUri })
+        ? await askMultipart({ question: trimmed, imageUri })
         : await askJson({ caseId, question: trimmed });
       setAnswer(result);
-      try {
-        await createQuestion({ caseId, question: trimmed });
-      } catch {
-        // best-effort
-      }
     } catch (error) {
       const message =
         error && typeof error === 'object' && 'message' in error
@@ -83,7 +77,10 @@ export default function AskScreen(): React.ReactElement {
   };
 
   const continueInChat = (): void => {
-    navigation.navigate('VisualQaChat', { caseId });
+    navigation.navigate('VisualQaChat', {
+      caseId,
+      sessionId: answer?.sessionId,
+    });
   };
 
   const canSubmit = question.trim().length > 0 && !loading;

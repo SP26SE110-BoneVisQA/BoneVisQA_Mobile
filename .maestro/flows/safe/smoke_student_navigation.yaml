@@ -1,0 +1,24 @@
+appId: com.doanminhtien.mobile
+name: Smoke - student login and main navigation
+---
+- runFlow: ../../helpers/login_student.yaml
+- assertVisible: "BoneVisQA"
+- assertVisible: "Trang chủ"
+- tapOn: "Quiz"
+- extendedWaitUntil:
+    visible: "Tiến độ"
+    timeout: 20000
+- tapOn: "Bài tập"
+- extendedWaitUntil:
+    visible: "Bài tự luận"
+    timeout: 20000
+- tapOn: "Ca lâm sàng"
+- extendedWaitUntil:
+    visible: "Tìm case..."
+    timeout: 20000
+- tapOn: "Thông báo"
+- assertVisible: "Thông báo"
+- tapOn: "Hồ sơ"
+- extendedWaitUntil:
+    visible: "Hồ sơ"
+    timeout: 20000

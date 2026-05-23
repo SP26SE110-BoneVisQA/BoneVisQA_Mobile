@@ -67,11 +67,83 @@ export interface VisualQaMessage {
   isLoading?: boolean;
   isError?: boolean;
   references?: string[];
+  turnId?: string;
+  reviewState?: string;
+}
+
+export interface VisualQaCitation {
+  label?: string;
+  url?: string;
+  snippet?: string;
+}
+
+export interface VisualQaCapabilities {
+  canAskNext: boolean;
+  isReadOnly: boolean;
+  canRequestReview: boolean;
+  turnsUsed: number;
+  turnLimit: number;
+}
+
+export interface VisualQaTurn {
+  sessionId: string;
+  id?: string;
+  question: string;
+  answer: string;
+  diagnosis?: string;
+  findings: string[];
+  differentialDiagnoses: string[];
+  reflectiveQuestions: string[];
+  citations: VisualQaCitation[];
+  createdAt: string;
+  reviewState?: string;
+  lastResponderRole?: string;
+  isReviewTarget: boolean;
 }
 
 export interface VisualQaAnswer {
   answer: string;
   references?: string[];
+  sessionId?: string;
+  diagnosis?: string;
+  findings: string[];
+  differentialDiagnoses: string[];
+  reflectiveQuestions: string[];
+  citations: VisualQaCitation[];
+  capabilities?: VisualQaCapabilities;
+  latestTurn?: VisualQaTurn;
+  reviewState?: string;
+}
+
+export type VisualQaHistoryFilter = 'all' | 'cases' | 'personal';
+
+export interface VisualQaHistoryItem {
+  sessionId: string;
+  caseId?: string;
+  status?: string;
+  updatedAt?: string;
+  imageUrl?: string;
+  questionSnippet?: string;
+  reviewState?: string;
+  lastResponderRole?: string;
+  rejectionReason?: string;
+}
+
+export interface VisualQaHistoryResult {
+  totalCount: number;
+  items: VisualQaHistoryItem[];
+}
+
+export interface VisualQaThread {
+  sessionId: string;
+  imageUrl?: string;
+  caseId?: string;
+  turns: VisualQaTurn[];
+  capabilities?: VisualQaCapabilities;
+  reviewState?: string;
+  lastResponderRole?: string;
+  blockingNotice?: string;
+  rejectionReason?: string;
 }
 
 export interface CaseCatalogParams {

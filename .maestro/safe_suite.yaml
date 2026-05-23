@@ -1,0 +1,8 @@
+appId: com.doanminhtien.mobile
+name: Student E2E - safe default suite
+---
+- runFlow: flows/safe/smoke_student_navigation.yaml
+- runFlow: flows/safe/assignments_local_draft.yaml
+- runFlow: flows/safe/classes_list_detail.yaml
+- runFlow: flows/safe/visual_qa_history_thread.yaml
+- runFlow: flows/safe/advanced_analytics.yaml

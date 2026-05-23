@@ -41,7 +41,9 @@ export type CasesStackParamList = {
   CaseDetail: { caseId: string };
   CaseHistory: undefined;
   VisualQaAsk: { caseId?: string };
-  VisualQaChat: { caseId?: string };
+  VisualQaChat: { caseId?: string; sessionId?: string };
+  VisualQaHistory: undefined;
+  VisualQaThread: { sessionId: string };
 };
 
 export type AssignmentsStackParamList = {
@@ -59,4 +61,6 @@ export type ProfileStackParamList = {
   Settings: undefined;
   ChangePassword: undefined;
   MedicalVerification: undefined;
+  Classes: undefined;
+  ClassDetail: { classId: string };
 };

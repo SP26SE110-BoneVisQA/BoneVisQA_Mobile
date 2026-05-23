@@ -1,0 +1,19 @@
+appId: com.doanminhtien.mobile
+name: Opt-in - submit mock assignment state
+---
+- runFlow: ../../helpers/login_student.yaml
+- tapOn: "Bài tập"
+- tapOn: ${E2E_ASSIGNMENT_TITLE}
+- extendedWaitUntil:
+    visible: "Bài làm"
+    timeout: 20000
+- tapOn: "Nhập câu trả lời tự luận..."
+- inputText: "Maestro opt-in local mock submission"
+- hideKeyboard
+- tapOn: "Nộp bài"
+- assertVisible: "Nộp assignment?"
+- tapOn: "Nộp bài"
+- extendedWaitUntil:
+    visible: "Đã nộp"
+    timeout: 20000
+- assertVisible: "Nội dung đã nộp"

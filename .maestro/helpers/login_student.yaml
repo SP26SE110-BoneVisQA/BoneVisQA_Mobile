@@ -1,0 +1,17 @@
+appId: com.doanminhtien.mobile
+name: Helper - student login with environment credentials
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible: "BoneVisQA"
+    timeout: 15000
+- tapOn: "student@example.com"
+- inputText: ${STUDENT_EMAIL}
+- tapOn: "Nhập mật khẩu"
+- inputText: ${STUDENT_PASSWORD}
+- hideKeyboard
+- tapOn: "Đăng nhập"
+- extendedWaitUntil:
+    visible: "Trang chủ"
+    timeout: 45000

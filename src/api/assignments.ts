@@ -1,114 +1,99 @@
-import { api } from './client';
-import type { Assignment, AssignmentStatus } from '../types/quiz';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { Assignment } from '../types/quiz';
 
-interface RawStudentAssignmentSummaryDto {
-  id?: string;
-  title?: string | null;
-  type?: string | null;
-  status?: string | null;
-  dueAt?: string | null;
-  dueDate?: string | null;
-  submittedAt?: string | null;
+const LOCAL_SUBMISSION_PREFIX = 'BONEVISQA_ASSIGNMENT_SUBMISSION_';
+
+const DEMO_ASSIGNMENTS: Assignment[] = [
+  {
+    id: 'demo-assignment-chest-xray',
+    title: 'Bao cao quan sat X-quang nguc',
+    type: 'Tu luan',
+    description: 'Luyen tap mo ta phim X-quang theo cau truc.',
+    instructions:
+      'Neu chat luong hinh anh, dau hieu quan trong va mot chan doan phan biet.',
+    dueDate: '2026-06-01T16:00:00.000Z',
+    status: 'pending',
+  },
+  {
+    id: 'demo-assignment-fracture',
+    title: 'Nhan dinh xu tri gay xuong',
+    type: 'Tu luan',
+    description: 'Trinh bay danh gia ban dau doi voi chan thuong chi.',
+    instructions:
+      'Tom tat dau hieu hinh anh va de xuat buoc lam sang tiep theo.',
+    dueDate: '2026-06-05T16:00:00.000Z',
+    status: 'pending',
+  },
+];
+
+function localSubmissionKey(assignmentId: string): string {
+  return `${LOCAL_SUBMISSION_PREFIX}${assignmentId}`;
 }
 
-interface RawStudentAssignmentDetailDto extends RawStudentAssignmentSummaryDto {
-  description?: string | null;
-  instructions?: string | null;
-  answerText?: string | null;
-  score?: number | null;
-  feedback?: string | null;
-}
-
-interface SubmitAssignmentResponseDto extends RawStudentAssignmentDetailDto {
-  submissionId?: string;
-}
-
-function normalizeStatus(
-  status: string | null | undefined,
-  dueAt: string | null | undefined,
-  submittedAt?: string | null,
-  score?: number | null,
-): AssignmentStatus {
-  const value = (status ?? '').toLowerCase();
-  if (value.includes('graded') || typeof score === 'number') {
-    return 'graded';
-  }
-  if (
-    value.includes('submitted') ||
-    value.includes('completed') ||
-    Boolean(submittedAt)
-  ) {
-    return 'submitted';
-  }
-  if (value.includes('overdue')) {
-    return 'overdue';
-  }
-  if (!dueAt) {
-    return 'pending';
-  }
-  const due = new Date(dueAt).getTime();
-  if (Number.isNaN(due)) {
-    return 'pending';
-  }
-  return due < Date.now() ? 'overdue' : 'pending';
-}
-
-function isNotFound(error: unknown): boolean {
-  if (error && typeof error === 'object' && 'status' in error) {
-    const status = (error as { status: unknown }).status;
-    return status === 404;
-  }
-  return false;
-}
-
-function mapAssignment(
-  dto: RawStudentAssignmentSummaryDto | RawStudentAssignmentDetailDto,
-): Assignment {
-  const dueDate = dto.dueAt ?? dto.dueDate ?? undefined;
-  const detail = dto as RawStudentAssignmentDetailDto;
+function enrichDetail(assignment: Assignment): Assignment {
   return {
-    id: dto.id ?? '',
-    title: dto.title ?? 'Nhiệm vụ',
-    type: dto.type ?? undefined,
-    description: detail.description ?? undefined,
-    instructions: detail.instructions ?? undefined,
-    dueDate,
-    submittedAt: dto.submittedAt ?? undefined,
-    answerText: detail.answerText ?? undefined,
-    score: detail.score ?? undefined,
-    feedback: detail.feedback ?? undefined,
-    status: normalizeStatus(dto.status, dueDate, dto.submittedAt, detail.score),
+    ...assignment,
+    description:
+      assignment.description ??
+      'Bai tap dang o che do demo trong khi backend hoan thien noi dung chi tiet.',
+    instructions:
+      assignment.instructions ??
+      'Viet cau tra loi ngan gon dua tren quan sat ca va lap luan lam sang.',
   };
 }
 
-export async function listAssignments(): Promise<Assignment[]> {
+async function withLocalSubmission(assignment: Assignment): Promise<Assignment> {
+  const raw = await AsyncStorage.getItem(localSubmissionKey(assignment.id));
+  if (!raw) {
+    return assignment;
+  }
   try {
-    const { data } = await api.get<RawStudentAssignmentSummaryDto[]>(
-      '/api/student/assignments',
-    );
-    return Array.isArray(data) ? data.map(mapAssignment) : [];
-  } catch (error: unknown) {
-    if (isNotFound(error)) {
-      return [];
+    const saved = JSON.parse(raw) as { answerText?: string; submittedAt?: string };
+    if (!saved.answerText || !saved.submittedAt) {
+      return assignment;
     }
-    throw error;
+    return {
+      ...assignment,
+      answerText: saved.answerText,
+      submittedAt: saved.submittedAt,
+      status: 'submitted',
+    };
+  } catch {
+    return assignment;
   }
 }
 
+export async function listAssignments(): Promise<Assignment[]> {
+  return Promise.all(DEMO_ASSIGNMENTS.map(withLocalSubmission));
+}
+
 export async function getAssignment(assignmentId: string): Promise<Assignment> {
-  const { data } = await api.get<RawStudentAssignmentDetailDto>(
-    `/api/student/assignments/${assignmentId}`,
-  );
-  return mapAssignment(data);
+  const assignments = await listAssignments();
+  const match = assignments.find((assignment) => assignment.id === assignmentId);
+  const fallback =
+    DEMO_ASSIGNMENTS.find((assignment) => assignment.id === assignmentId) ?? {
+      id: assignmentId,
+      title: 'Assignment',
+      type: 'Tu luan',
+      status: 'pending' as const,
+    };
+  return enrichDetail(await withLocalSubmission(match ?? fallback));
 }
 
 export async function submitAssignment(
   assignmentId: string,
   answerText: string,
 ): Promise<Assignment> {
-  const { data } = await api.post<SubmitAssignmentResponseDto>(
-    `/api/student/assignments/${assignmentId}/submissions`,
-    { answerText },
+  const assignment = await getAssignment(assignmentId);
+  const submittedAt = new Date().toISOString();
+  await AsyncStorage.setItem(
+    localSubmissionKey(assignmentId),
+    JSON.stringify({ answerText, submittedAt }),
   );
-  return mapAssignment(data);
+  return {
+    ...assignment,
+    answerText,
+    submittedAt,
+    status: 'submitted',
+  };
 }
