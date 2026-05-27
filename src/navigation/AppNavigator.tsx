@@ -7,6 +7,7 @@ import {
   ClipboardList,
   FileText,
   Home,
+  MessageCircle,
   User,
 } from 'lucide-react-native';
 
@@ -51,6 +52,7 @@ import type {
   NotificationsStackParamList,
   ProfileStackParamList,
   QuizStackParamList,
+  VisualQaStackParamList,
 } from './types';
 
 const Tab = createBottomTabNavigator<AppTabParamList>();
@@ -150,27 +152,35 @@ function CasesStackNavigator(): React.ReactElement {
         component={CaseHistoryScreen}
         options={{ headerShown: true, title: 'Lịch sử ca' }}
       />
-      <CasesStack.Screen
-        name="VisualQaAsk"
-        component={AskScreen}
-        options={{ headerShown: true, title: 'Hỏi AI nhanh' }}
-      />
-      <CasesStack.Screen
+    </CasesStack.Navigator>
+  );
+}
+
+const VisualQaStack = createNativeStackNavigator<VisualQaStackParamList>();
+function VisualQaStackNavigator(): React.ReactElement {
+  return (
+    <VisualQaStack.Navigator screenOptions={{ headerShown: false }}>
+      <VisualQaStack.Screen
         name="VisualQaChat"
         component={ChatScreen}
         options={{ headerShown: true, title: 'Hỏi AI X-quang' }}
       />
-      <CasesStack.Screen
+      <VisualQaStack.Screen
+        name="VisualQaAsk"
+        component={AskScreen}
+        options={{ headerShown: true, title: 'Hỏi AI nhanh' }}
+      />
+      <VisualQaStack.Screen
         name="VisualQaHistory"
         component={VisualQaHistoryScreen}
         options={{ headerShown: true, title: 'Lịch sử Visual QA' }}
       />
-      <CasesStack.Screen
+      <VisualQaStack.Screen
         name="VisualQaThread"
         component={VisualQaThreadScreen}
         options={{ headerShown: true, title: 'Chi tiết hội thoại' }}
       />
-    </CasesStack.Navigator>
+    </VisualQaStack.Navigator>
   );
 }
 
@@ -233,6 +243,7 @@ export default function AppNavigator(): React.ReactElement {
         headerShown: false,
         tabBarActiveTintColor: '#14b8a6',
         tabBarInactiveTintColor: '#94a3b8',
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: '#ffffff',
           borderTopColor: '#e2e8f0',
@@ -274,6 +285,16 @@ export default function AppNavigator(): React.ReactElement {
           title: 'Ca lâm sàng',
           tabBarIcon: ({ color, size }) => (
             <FileText color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="VisualQaTab"
+        component={VisualQaStackNavigator}
+        options={{
+          title: 'Chat AI',
+          tabBarIcon: ({ color, size }) => (
+            <MessageCircle color={color} size={size} />
           ),
         }}
       />

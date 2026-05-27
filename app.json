@@ -16,13 +16,15 @@
       "supportsTablet": true
     },
     "android": {
+      "softwareKeyboardLayoutMode": "pan",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.doanminhtien.mobile"
+      "package": "com.doanminhtien.mobile",
+      "versionCode": 2
     },
     "web": {
       "favicon": "./assets/favicon.png"

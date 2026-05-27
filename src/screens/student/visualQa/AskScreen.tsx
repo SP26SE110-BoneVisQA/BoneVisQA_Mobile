@@ -18,10 +18,10 @@ import Input from '../../../components/common/Input';
 import Button from '../../../components/common/Button';
 import { askJson, askMultipart } from '../../../api/visualQa';
 import type { VisualQaAnswer } from '../../../types/case';
-import type { CasesStackParamList } from '../../../navigation/types';
+import type { VisualQaStackParamList } from '../../../navigation/types';
 
-type NavProp = NativeStackNavigationProp<CasesStackParamList, 'VisualQaAsk'>;
-type AskRoute = RouteProp<CasesStackParamList, 'VisualQaAsk'>;
+type NavProp = NativeStackNavigationProp<VisualQaStackParamList, 'VisualQaAsk'>;
+type AskRoute = RouteProp<VisualQaStackParamList, 'VisualQaAsk'>;
 
 export default function AskScreen(): React.ReactElement {
   const navigation = useNavigation<NavProp>();

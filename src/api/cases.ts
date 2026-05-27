@@ -6,6 +6,7 @@ import type {
   CaseFilterParams,
   CaseImage,
 } from '../types/case';
+import { API_BASE_URL } from '../constants/env';
 
 interface CaseListItemDto {
   id: string;
@@ -13,7 +14,8 @@ interface CaseListItemDto {
   description?: string | null;
   difficulty?: string | null;
   categoryName?: string | null;
-  thumbnailImageUrl?: string | null;
+  thumbnailUrl?: string | null;
+  createdAt?: string | null;
   isApproved?: boolean;
   tags?: string[] | null;
 }
@@ -71,6 +73,21 @@ function normalizeDifficulty(
   return undefined;
 }
 
+function resolveImageUrl(value?: string | null): string | undefined {
+  const raw = value?.trim();
+  if (!raw) {
+    return undefined;
+  }
+  const normalized = raw.replace(/\\/g, '/');
+  if (/^(https?:|file:|data:|blob:)/i.test(normalized)) {
+    return normalized;
+  }
+  if (normalized.startsWith('//')) {
+    return `https:${normalized}`;
+  }
+  return `${API_BASE_URL.replace(/\/+$/, '')}/${normalized.replace(/^\/+/, '')}`;
+}
+
 function mapListItemToCase(dto: CaseListItemDto): Case {
   return {
     id: dto.id,
@@ -79,25 +96,38 @@ function mapListItemToCase(dto: CaseListItemDto): Case {
     bodyRegion: dto.categoryName ?? undefined,
     categoryName: dto.categoryName ?? undefined,
     difficulty: normalizeDifficulty(dto.difficulty),
-    thumbnailUrl: dto.thumbnailImageUrl ?? undefined,
+    thumbnailUrl: resolveImageUrl(dto.thumbnailUrl),
     images: [],
     tags: dto.tags ?? undefined,
     isApproved: dto.isApproved,
+    createdAt: dto.createdAt ?? undefined,
   };
 }
 
 function mapImageToCaseImage(dto: MedicalImageDto, index: number): CaseImage {
   return {
     id: dto.id,
-    url: dto.imageUrl ?? '',
+    url: resolveImageUrl(dto.imageUrl) ?? '',
     order: index,
     modality: dto.modality ?? undefined,
   };
 }
 
 function mapDetailToCase(dto: CaseDetailDto): Case {
-  const images = (dto.images ?? []).map(mapImageToCaseImage);
-  const primaryImage = dto.primaryImageUrl ?? images[0]?.url;
+  const images = (dto.images ?? [])
+    .map(mapImageToCaseImage)
+    .filter((image) => image.url.length > 0);
+  const primaryImage = resolveImageUrl(dto.primaryImageUrl) ?? images[0]?.url;
+  const displayImages =
+    images.length > 0 || !primaryImage
+      ? images
+      : [
+          {
+            id: `${dto.id}-primary`,
+            url: primaryImage,
+            order: 0,
+          },
+        ];
   const firstModality = images.find((img) => img.modality)?.modality;
   return {
     id: dto.id,
@@ -108,7 +138,7 @@ function mapDetailToCase(dto: CaseDetailDto): Case {
     modality: firstModality,
     difficulty: normalizeDifficulty(dto.difficulty),
     thumbnailUrl: primaryImage,
-    images,
+    images: displayImages,
     expertSummary: dto.expertSummary ?? undefined,
     keyFindings: dto.keyFindings ?? undefined,
     reflectiveQuestions: dto.reflectiveQuestions ?? undefined,

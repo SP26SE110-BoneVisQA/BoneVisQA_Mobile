@@ -13,10 +13,10 @@ import ErrorView from '../../../components/common/ErrorView';
 import EmptyState from '../../../components/common/EmptyState';
 import { getVisualQaThread, requestVisualQaReview } from '../../../api/visualQa';
 import type { ApiError } from '../../../types/api';
-import type { CasesStackParamList } from '../../../navigation/types';
+import type { VisualQaStackParamList } from '../../../navigation/types';
 
-type Route = RouteProp<CasesStackParamList, 'VisualQaThread'>;
-type Navigation = NativeStackNavigationProp<CasesStackParamList, 'VisualQaThread'>;
+type Route = RouteProp<VisualQaStackParamList, 'VisualQaThread'>;
+type Navigation = NativeStackNavigationProp<VisualQaStackParamList, 'VisualQaThread'>;
 
 export default function VisualQaThreadScreen(): React.ReactElement {
   const { sessionId } = useRoute<Route>().params;

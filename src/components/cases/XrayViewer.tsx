@@ -8,11 +8,12 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { RotateCcw } from 'lucide-react-native';
+import { Minus, Plus, RotateCcw } from 'lucide-react-native';
 
 const MIN_SCALE = 1;
 const MAX_SCALE = 5;
 const DOUBLE_TAP_SCALE = 2.5;
+const SCALE_STEP = 0.5;
 
 export interface XrayViewerProps {
   uri: string;
@@ -51,6 +52,21 @@ export function XrayViewer({
     savedTranslateY.value = 0;
     setResetTick((t) => t + 1);
   }, [scale, savedScale, translateX, translateY, savedTranslateX, savedTranslateY]);
+
+  const zoomBy = React.useCallback(
+    (amount: number): void => {
+      const next = Math.min(Math.max(savedScale.value + amount, MIN_SCALE), MAX_SCALE);
+      scale.value = withTiming(next, { duration: 180 });
+      savedScale.value = next;
+      if (next === MIN_SCALE) {
+        translateX.value = withTiming(0, { duration: 180 });
+        translateY.value = withTiming(0, { duration: 180 });
+        savedTranslateX.value = 0;
+        savedTranslateY.value = 0;
+      }
+    },
+    [savedScale, savedTranslateX, savedTranslateY, scale, translateX, translateY],
+  );
 
   const clamp = (value: number, min: number, max: number): number => {
     'worklet';
@@ -138,12 +154,31 @@ export function XrayViewer({
           />
         </Animated.View>
       </GestureDetector>
-      <Pressable
-        onPress={reset}
-        className="absolute bottom-4 right-4 bg-black/60 rounded-full p-3"
-      >
-        <RotateCcw size={20} color="#ffffff" />
-      </Pressable>
+      <View className="absolute bottom-6 left-4 right-4 flex-row justify-between items-center">
+        <View className="flex-row bg-black/70 rounded-full p-1">
+          <Pressable
+            accessibilityLabel="Thu nho anh"
+            onPress={() => zoomBy(-SCALE_STEP)}
+            className="rounded-full p-3"
+          >
+            <Minus size={20} color="#ffffff" />
+          </Pressable>
+          <Pressable
+            accessibilityLabel="Phong to anh"
+            onPress={() => zoomBy(SCALE_STEP)}
+            className="rounded-full p-3"
+          >
+            <Plus size={20} color="#ffffff" />
+          </Pressable>
+        </View>
+        <Pressable
+          accessibilityLabel="Dat lai do phong anh"
+          onPress={reset}
+          className="bg-black/70 rounded-full p-3"
+        >
+          <RotateCcw size={20} color="#ffffff" />
+        </Pressable>
+      </View>
     </View>
   );
 }

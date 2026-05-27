@@ -10,6 +10,7 @@ import {
   Flame,
   Gauge,
   Lightbulb,
+  MessageCircle,
   Sparkles,
   Trophy,
 } from 'lucide-react-native';
@@ -197,6 +198,14 @@ export default function HomeScreen(): React.ReactElement {
     parent?.navigate('AssignmentsTab');
   }, [navigation]);
 
+  const goAiChat = useCallback((): void => {
+    const parent = navigation.getParent<TabNavProp>();
+    parent?.navigate('VisualQaTab', {
+      screen: 'VisualQaChat',
+      params: {},
+    });
+  }, [navigation]);
+
   const goAssignmentDetail = useCallback(
     (assignmentId: string): void => {
       const parent = navigation.getParent<TabNavProp>();
@@ -239,6 +248,28 @@ export default function HomeScreen(): React.ReactElement {
           Hôm nay bạn muốn rèn luyện gì?
         </Text>
       </View>
+
+      <Card className="mb-5 bg-teal-50 border border-primary/20">
+        <View className="flex-row items-center mb-4">
+          <View className="w-12 h-12 rounded-2xl bg-primary items-center justify-center mr-3">
+            <MessageCircle size={24} color="#ffffff" />
+          </View>
+          <View className="flex-1">
+            <Text className="text-base font-bold text-slate-900 dark:text-white">
+              Chatbox AI X-quang
+            </Text>
+            <Text className="text-xs text-slate-600 mt-1">
+              Trao đổi trực tiếp với AI hoặc đính kèm ảnh để phân tích.
+            </Text>
+          </View>
+        </View>
+        <Button
+          label="Mở chatbox AI"
+          onPress={goAiChat}
+          rightIcon={<ArrowRight size={16} color="#ffffff" />}
+          fullWidth
+        />
+      </Card>
 
       <View className="flex-row gap-3 mb-5">
         <StatCard

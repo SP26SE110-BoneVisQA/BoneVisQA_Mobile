@@ -85,26 +85,12 @@ export default function CaseListScreen(): React.ReactElement {
     navigation.setOptions({
       title: 'Ca lâm sàng',
       headerRight: () => (
-        <View className="flex-row items-center">
-          <Pressable
-            onPress={() => navigation.navigate('VisualQaAsk', {})}
-            className="px-2"
-          >
-            <Text className="text-primary font-semibold text-xs">Hỏi AI</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => navigation.navigate('VisualQaHistory')}
-            className="px-2"
-          >
-            <Text className="text-primary font-semibold text-xs">Lịch sử AI</Text>
-          </Pressable>
-          <Pressable
-            onPress={() => navigation.navigate('CaseHistory')}
-            className="px-2"
-          >
-            <History size={22} color="#0f766e" />
-          </Pressable>
-        </View>
+        <Pressable
+          onPress={() => navigation.navigate('CaseHistory')}
+          className="px-2"
+        >
+          <History size={22} color="#0f766e" />
+        </Pressable>
       ),
     });
   }, [navigation]);

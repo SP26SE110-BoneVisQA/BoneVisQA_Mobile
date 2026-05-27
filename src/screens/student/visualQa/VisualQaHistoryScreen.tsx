@@ -12,9 +12,9 @@ import EmptyState from '../../../components/common/EmptyState';
 import { getVisualQaHistory } from '../../../api/visualQa';
 import type { ApiError } from '../../../types/api';
 import type { VisualQaHistoryFilter } from '../../../types/case';
-import type { CasesStackParamList } from '../../../navigation/types';
+import type { VisualQaStackParamList } from '../../../navigation/types';
 
-type Navigation = NativeStackNavigationProp<CasesStackParamList, 'VisualQaHistory'>;
+type Navigation = NativeStackNavigationProp<VisualQaStackParamList, 'VisualQaHistory'>;
 
 const FILTERS: Array<{ value: VisualQaHistoryFilter; label: string }> = [
   { value: 'all', label: 'Tất cả' },
