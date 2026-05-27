@@ -15,10 +15,10 @@ import { getVisualQaThread } from '../../../api/visualQa';
 import { useVisualQa } from '../../../hooks/useVisualQa';
 import type { Case, VisualQaMessage, VisualQaThread } from '../../../types/case';
 import type { ApiError } from '../../../types/api';
-import type { CasesStackParamList } from '../../../navigation/types';
+import type { VisualQaStackParamList } from '../../../navigation/types';
 
-type NavProp = NativeStackNavigationProp<CasesStackParamList, 'VisualQaChat'>;
-type ChatRoute = RouteProp<CasesStackParamList, 'VisualQaChat'>;
+type NavProp = NativeStackNavigationProp<VisualQaStackParamList, 'VisualQaChat'>;
+type ChatRoute = RouteProp<VisualQaStackParamList, 'VisualQaChat'>;
 
 export default function ChatScreen(): React.ReactElement {
   const navigation = useNavigation<NavProp>();
@@ -125,7 +125,7 @@ export default function ChatScreen(): React.ReactElement {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={90}
+        keyboardVerticalOffset={0}
       >
         <View className="flex-1">
           <ChatList messages={messages} />

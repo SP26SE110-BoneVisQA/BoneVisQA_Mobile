@@ -15,7 +15,8 @@ export type AppTabParamList = {
   HomeTab: undefined;
   QuizTab: undefined;
   AssignmentsTab: NavigatorScreenParams<AssignmentsStackParamList> | undefined;
-  CasesTab: undefined;
+  CasesTab: NavigatorScreenParams<CasesStackParamList> | undefined;
+  VisualQaTab: NavigatorScreenParams<VisualQaStackParamList> | undefined;
   NotificationsTab: undefined;
   ProfileTab: undefined;
 };
@@ -40,6 +41,9 @@ export type CasesStackParamList = {
   CaseList: undefined;
   CaseDetail: { caseId: string };
   CaseHistory: undefined;
+};
+
+export type VisualQaStackParamList = {
   VisualQaAsk: { caseId?: string };
   VisualQaChat: { caseId?: string; sessionId?: string };
   VisualQaHistory: undefined;

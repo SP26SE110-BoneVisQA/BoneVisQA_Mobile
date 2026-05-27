@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   FlatList,
+  Platform,
   Text,
   View,
   type ListRenderItemInfo,
@@ -67,6 +68,7 @@ export function ChatList({
       inverted
       contentContainerStyle={{ paddingHorizontal: 12, paddingVertical: 8 }}
       keyboardShouldPersistTaps="handled"
+      keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
       className={className ?? ''}
     />
   );

@@ -36,6 +36,17 @@ function extractMessage(data: unknown, fallback: string): string {
     if (typeof record.error === 'string') {
       return record.error;
     }
+    if (typeof record.detail === 'string') {
+      return record.detail;
+    }
+    if (record.errors && typeof record.errors === 'object') {
+      const firstMessages = Object.values(record.errors as Record<string, unknown>)
+        .flatMap((value) => (Array.isArray(value) ? value : [value]))
+        .filter((value): value is string => typeof value === 'string');
+      if (firstMessages.length > 0) {
+        return firstMessages.join('\n');
+      }
+    }
     if (typeof record.title === 'string') {
       return record.title;
     }
@@ -44,6 +55,16 @@ function extractMessage(data: unknown, fallback: string): string {
 }
 
 function toApiError(error: unknown): ApiError {
+  if (
+    error &&
+    typeof error === 'object' &&
+    'status' in error &&
+    'message' in error &&
+    typeof (error as { status: unknown }).status === 'number' &&
+    typeof (error as { message: unknown }).message === 'string'
+  ) {
+    return error as ApiError;
+  }
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError;
     const status = axiosError.response?.status ?? 0;
