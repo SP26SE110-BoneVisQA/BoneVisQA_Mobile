@@ -15,23 +15,23 @@ export interface CaseFiltersProps {
 }
 
 export const REGION_OPTIONS: string[] = [
-  'Cột sống cổ',
-  'Cột sống ngực',
-  'Cột sống thắt lưng',
-  'Khung chậu',
-  'Chi trên',
-  'Chi dưới',
+  'Cervical spine',
+  'Thoracic spine',
+  'Lumbar spine',
+  'Pelvis',
+  'Upper limb',
+  'Lower limb',
 ];
 
-export const MODALITY_OPTIONS: string[] = ['X-quang', 'CT', 'MRI', 'Siêu âm'];
+export const MODALITY_OPTIONS: string[] = ['X-ray', 'CT', 'MRI', 'Ultrasound'];
 
 export const DIFFICULTY_OPTIONS: ReadonlyArray<{
   value: CaseDifficulty;
   label: string;
 }> = [
-  { value: 'easy', label: 'Dễ' },
-  { value: 'medium', label: 'Trung bình' },
-  { value: 'hard', label: 'Khó' },
+  { value: 'easy', label: 'Easy' },
+  { value: 'medium', label: 'Medium' },
+  { value: 'hard', label: 'Hard' },
 ];
 
 function toggleItem<T>(list: T[], item: T): T[] {
@@ -89,7 +89,7 @@ export function CaseFilters({
     <View className={['gap-y-2', className ?? ''].join(' ')}>
       <View>
         <Text className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1.5 ml-1">
-          Vùng giải phẫu
+          Anatomic region
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {REGION_OPTIONS.map((region) => (
@@ -104,7 +104,7 @@ export function CaseFilters({
       </View>
       <View>
         <Text className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1.5 ml-1">
-          Phương thức
+          Modality
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {MODALITY_OPTIONS.map((modality) => (
@@ -119,7 +119,7 @@ export function CaseFilters({
       </View>
       <View>
         <Text className="text-[11px] text-slate-500 dark:text-slate-400 uppercase font-semibold mb-1.5 ml-1">
-          Độ khó
+          Difficulty
         </Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {DIFFICULTY_OPTIONS.map((d) => (

@@ -26,12 +26,12 @@ type Navigation = NativeStackNavigationProp<
 const medicalSchema = z.object({
   fullName: z
     .string()
-    .min(2, 'Họ tên tối thiểu 2 ký tự')
-    .max(120, 'Họ tên quá dài'),
+    .min(2, 'Full name must be at least 2 characters')
+    .max(120, 'Full name is too long'),
   studentSchoolId: z
     .string()
-    .min(2, 'Vui lòng nhập mã sinh viên')
-    .max(50, 'Quá dài'),
+    .min(2, 'Please enter your student ID')
+    .max(50, 'Too long'),
 });
 
 type MedicalFormInput = z.infer<typeof medicalSchema>;
@@ -66,8 +66,8 @@ export default function MedicalVerificationScreen(): React.ReactElement {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       Alert.alert(
-        'Cần quyền truy cập thư viện',
-        'Vui lòng cấp quyền truy cập ảnh trong cài đặt thiết bị.',
+        'Photo library permission required',
+        'Please allow photo access in your device settings.',
       );
       return;
     }
@@ -93,15 +93,15 @@ export default function MedicalVerificationScreen(): React.ReactElement {
         onSuccess: () => {
           Toast.show({
             type: 'success',
-            text1: 'Đã gửi yêu cầu xác minh',
-            text2: 'Quản trị viên sẽ xem xét trong thời gian sớm nhất.',
+            text1: 'Verification request sent',
+            text2: 'An administrator will review it as soon as possible.',
           });
           navigation.goBack();
         },
         onError: (err) => {
           Toast.show({
             type: 'error',
-            text1: 'Gửi yêu cầu thất bại',
+            text1: 'Request failed',
             text2: err.message,
           });
         },
@@ -113,12 +113,10 @@ export default function MedicalVerificationScreen(): React.ReactElement {
     <Screen scroll>
       <View className="flex-1">
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-          Xác minh y khoa
+          Medical verification
         </Text>
         <Text className="text-slate-500 dark:text-slate-400 text-sm mb-6 leading-5">
-          Xác minh y khoa giúp bạn truy cập các ca bệnh và nội dung chuyên sâu
-          dành riêng cho sinh viên y. Vui lòng cung cấp thông tin và ảnh chụp
-          giấy tờ chứng minh bạn đang là sinh viên y khoa.
+          Medical verification lets you access advanced cases and content for medical students. Please provide your details and a photo proving your medical student status.
         </Text>
 
         <Card className="mb-6 bg-primary/5 border-primary/20">
@@ -128,12 +126,12 @@ export default function MedicalVerificationScreen(): React.ReactElement {
             </View>
             <View className="flex-1">
               <Text className="text-slate-900 dark:text-white text-sm font-semibold mb-1">
-                Quy trình xác minh
+                Verification process
               </Text>
               <Text className="text-slate-600 dark:text-slate-300 text-xs leading-5">
-                1. Điền họ tên và mã sinh viên chính xác.{'\n'}
-                2. Tải lên ảnh thẻ sinh viên hoặc giấy xác nhận.{'\n'}
-                3. Chờ quản trị viên xác nhận (1-3 ngày làm việc).
+                1. Enter your full name and student ID accurately.{'\n'}
+                2. Upload a student card or confirmation document.{'\n'}
+                3. Wait for admin approval (1-3 business days).
               </Text>
             </View>
           </View>
@@ -145,8 +143,8 @@ export default function MedicalVerificationScreen(): React.ReactElement {
             name="fullName"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Họ và tên đầy đủ"
-                placeholder="Nguyễn Văn A"
+                label="Full name"
+                placeholder="John Doe"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -160,7 +158,7 @@ export default function MedicalVerificationScreen(): React.ReactElement {
             name="studentSchoolId"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Mã sinh viên"
+                label="Student ID"
                 placeholder="SV2024001"
                 value={value}
                 onChangeText={onChange}
@@ -173,7 +171,7 @@ export default function MedicalVerificationScreen(): React.ReactElement {
 
           <View>
             <Text className="text-slate-700 dark:text-slate-300 text-sm font-medium mb-1.5 ml-1">
-              Ảnh minh chứng (không bắt buộc)
+              Proof image (optional)
             </Text>
             {proofUri ? (
               <View className="relative">
@@ -198,7 +196,7 @@ export default function MedicalVerificationScreen(): React.ReactElement {
               >
                 <ImagePlus size={28} color="#94a3b8" />
                 <Text className="text-slate-500 dark:text-slate-400 text-sm mt-2">
-                  Chạm để chọn ảnh thẻ sinh viên
+                  Tap to choose a student card image
                 </Text>
               </Pressable>
             )}
@@ -207,7 +205,7 @@ export default function MedicalVerificationScreen(): React.ReactElement {
 
         <View className="mt-6 mb-8">
           <Button
-            label="Gửi yêu cầu xác minh"
+            label="Submit verification request"
             variant="primary"
             size="lg"
             fullWidth

@@ -40,13 +40,13 @@ type TabNavProp = BottomTabNavigationProp<AppTabParamList>;
 
 function getGreeting(fullName?: string): string {
   const hour = new Date().getHours();
-  let prefix = 'Xin chào';
+  let prefix = 'Hello';
   if (hour < 12) {
-    prefix = 'Chào buổi sáng';
+    prefix = 'Good morning';
   } else if (hour < 18) {
-    prefix = 'Chào buổi chiều';
+    prefix = 'Good afternoon';
   } else {
-    prefix = 'Chào buổi tối';
+    prefix = 'Good evening';
   }
   return fullName ? `${prefix}, ${fullName}` : prefix;
 }
@@ -62,17 +62,17 @@ function formatRelative(iso: string | undefined): string {
   const diff = Date.now() - then;
   const minutes = Math.floor(diff / 60000);
   if (minutes < 1) {
-    return 'Vừa xong';
+    return 'Just now';
   }
   if (minutes < 60) {
-    return `${minutes} phút trước`;
+    return `${minutes} minutes ago`;
   }
   const hours = Math.floor(minutes / 60);
   if (hours < 24) {
-    return `${hours} giờ trước`;
+    return `${hours} hours ago`;
   }
   const days = Math.floor(hours / 24);
-  return `${days} ngày trước`;
+  return `${days} days ago`;
 }
 
 function activityIconColor(type: RecentActivity['type']): string {
@@ -99,12 +99,12 @@ function AssignmentItem({
   const due = assignment.dueDate ? new Date(assignment.dueDate) : null;
   const dueText =
     due && !Number.isNaN(due.getTime())
-      ? due.toLocaleDateString('vi-VN', {
+      ? due.toLocaleDateString('en-US', {
           day: '2-digit',
           month: '2-digit',
           year: 'numeric',
         })
-      : 'Không xác định';
+      : 'Unknown';
   const overdue = assignment.status === 'overdue';
   return (
     <Pressable
@@ -124,7 +124,7 @@ function AssignmentItem({
           {assignment.title}
         </Text>
         <Text className={['text-xs mt-0.5', overdue ? 'text-rose-600' : 'text-slate-500'].join(' ')}>
-          {overdue ? 'Quá hạn · ' : 'Hạn: '} {dueText}
+          {overdue ? 'Overdue · ' : 'Due: '} {dueText}
         </Text>
       </View>
     </Pressable>
@@ -220,7 +220,7 @@ export default function HomeScreen(): React.ReactElement {
   if (progress.isLoading && !progress.data) {
     return (
       <Screen>
-        <Loading text="Đang tải trang chủ…" />
+        <Loading text="Loading home..." />
       </Screen>
     );
   }
@@ -245,7 +245,7 @@ export default function HomeScreen(): React.ReactElement {
           {getGreeting(user?.fullName)}
         </Text>
         <Text className="text-sm text-slate-500 mt-1">
-          Hôm nay bạn muốn rèn luyện gì?
+          What would you like to practice today?
         </Text>
       </View>
 
@@ -256,15 +256,15 @@ export default function HomeScreen(): React.ReactElement {
           </View>
           <View className="flex-1">
             <Text className="text-base font-bold text-slate-900 dark:text-white">
-              Chatbox AI X-quang
+              Chatbox AI X-ray
             </Text>
             <Text className="text-xs text-slate-600 mt-1">
-              Trao đổi trực tiếp với AI hoặc đính kèm ảnh để phân tích.
+              Chat directly with AI or attach an image for analysis.
             </Text>
           </View>
         </View>
         <Button
-          label="Mở chatbox AI"
+          label="Open AI chatbox"
           onPress={goAiChat}
           rightIcon={<ArrowRight size={16} color="#ffffff" />}
           fullWidth
@@ -274,23 +274,23 @@ export default function HomeScreen(): React.ReactElement {
       <View className="flex-row gap-3 mb-5">
         <StatCard
           icon={<BookOpen size={18} color="#14b8a6" />}
-          label="Tổng quiz"
+          label="Total quizzes"
           value={String(summary?.totalQuizzes ?? 0)}
-          hint={`Hoàn thành ${summary?.completedQuizzes ?? 0}`}
+          hint={`Completed ${summary?.completedQuizzes ?? 0}`}
           tone="primary"
         />
         <StatCard
           icon={<Trophy size={18} color="#059669" />}
-          label="Điểm trung bình"
+          label="Average score"
           value={(summary?.averageScore ?? 0).toFixed(1)}
-          hint="Trên 100"
+          hint="Out of 100"
           tone="emerald"
         />
         <StatCard
           icon={<Flame size={18} color="#d97706" />}
-          label="Chuỗi ngày"
+          label="Daily streak"
           value={String(summary?.streakDays ?? 0)}
-          hint="Giữ phong độ"
+          hint="Keep it going"
           tone="amber"
         />
       </View>
@@ -298,21 +298,21 @@ export default function HomeScreen(): React.ReactElement {
       <Card className="mb-5">
         <View className="flex-row items-center justify-between mb-2">
           <Text className="text-base font-semibold text-slate-900 dark:text-white">
-            Assignments sắp đến hạn
+            Upcoming assignments
           </Text>
           <Text className="text-xs text-primary font-semibold" onPress={goAssignments}>
-            Xem tất cả
+            View all
           </Text>
         </View>
         {assignments.isLoading ? (
           <View className="py-6">
-            <Loading text="Đang tải…" />
+            <Loading text="Loading…" />
           </View>
         ) : upcomingAssignments.length === 0 ? (
           <EmptyState
             icon={<Gauge size={28} color="#94a3b8" />}
-            title="Không có bài tập sắp đến hạn"
-            subtitle="Bạn đã hoàn thành mọi thứ — hãy thử luyện tập thêm!"
+            title="No upcoming assignments"
+            subtitle="You have completed everything. Try more practice!"
           />
         ) : (
           <View>
@@ -330,18 +330,18 @@ export default function HomeScreen(): React.ReactElement {
       <Card className="mb-5">
         <View className="flex-row items-center justify-between mb-2">
           <Text className="text-base font-semibold text-slate-900 dark:text-white">
-            Hoạt động gần đây
+            Recent activity
           </Text>
         </View>
         {activity.isLoading ? (
           <View className="py-6">
-            <Loading text="Đang tải…" />
+            <Loading text="Loading…" />
           </View>
         ) : topActivities.length === 0 ? (
           <EmptyState
             icon={<Sparkles size={28} color="#94a3b8" />}
-            title="Chưa có hoạt động"
-            subtitle="Bắt đầu một bài quiz hoặc khám phá ca lâm sàng."
+            title="No activity yet"
+            subtitle="Start a quiz or explore clinical cases."
           />
         ) : (
           <View>
@@ -359,15 +359,15 @@ export default function HomeScreen(): React.ReactElement {
           </View>
           <View className="flex-1">
             <Text className="text-base font-semibold text-slate-900 dark:text-white">
-              Practice gợi ý
+              Suggested practice
             </Text>
             <Text className="text-xs text-slate-500 mt-0.5">
-              Luyện tập theo chủ đề, AI sinh câu hỏi riêng cho bạn.
+              Practice by topic with AI-generated questions for you.
             </Text>
           </View>
         </View>
         <Button
-          label="Làm quiz luyện tập"
+          label="Take a practice quiz"
           onPress={goPractice}
           rightIcon={<ArrowRight size={16} color="#ffffff" />}
           fullWidth

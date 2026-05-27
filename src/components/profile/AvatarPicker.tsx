@@ -32,8 +32,8 @@ export function AvatarPicker({
     const perm = await ImagePicker.requestCameraPermissionsAsync();
     if (!perm.granted) {
       Alert.alert(
-        'Cần quyền truy cập camera',
-        'Vui lòng cấp quyền camera trong cài đặt thiết bị.',
+        'Camera permission required',
+        'Please allow camera access in your device settings.',
       );
       return;
     }
@@ -54,8 +54,8 @@ export function AvatarPicker({
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
       Alert.alert(
-        'Cần quyền truy cập thư viện',
-        'Vui lòng cấp quyền truy cập ảnh trong cài đặt thiết bị.',
+        'Photo library permission required',
+        'Please allow photo access in your device settings.',
       );
       return;
     }
@@ -95,7 +95,7 @@ export function AvatarPicker({
         className="mt-3"
       >
         <Text className="text-primary-dark text-sm font-semibold">
-          Thay đổi ảnh đại diện
+          Change avatar
         </Text>
       </Pressable>
 
@@ -115,7 +115,7 @@ export function AvatarPicker({
           >
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-slate-900 dark:text-white text-lg font-bold">
-                Chọn ảnh
+                Choose image
               </Text>
               <Pressable
                 onPress={() => setPickerOpen(false)}
@@ -134,7 +134,7 @@ export function AvatarPicker({
                 <Camera size={20} color="#14b8a6" />
               </View>
               <Text className="text-slate-900 dark:text-white text-base font-medium">
-                Chụp ảnh mới
+                Take a new photo
               </Text>
             </Pressable>
             <Pressable
@@ -147,7 +147,7 @@ export function AvatarPicker({
                 <ImageIcon size={20} color="#14b8a6" />
               </View>
               <Text className="text-slate-900 dark:text-white text-base font-medium">
-                Chọn từ thư viện
+                Choose from library
               </Text>
             </Pressable>
           </Pressable>

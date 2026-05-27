@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import dayjs from 'dayjs';
-import 'dayjs/locale/vi';
 import { Megaphone, X } from 'lucide-react-native';
 import Loading from '../../../components/common/Loading';
 import ErrorView from '../../../components/common/ErrorView';
@@ -19,11 +18,9 @@ import Card from '../../../components/common/Card';
 import { useAnnouncements } from '../../../hooks/useNotifications';
 import type { Announcement } from '../../../types/notification';
 
-dayjs.locale('vi');
-
 function formatDate(iso: string): string {
   const d = dayjs(iso);
-  return d.isValid() ? d.format('DD/MM/YYYY HH:mm') : '';
+  return d.isValid() ? d.format('MM/DD/YYYY HH:mm') : '';
 }
 
 interface ClassFilterProps {
@@ -60,7 +57,7 @@ function ClassFilter({
               : 'text-slate-700 dark:text-slate-200',
           ].join(' ')}
         >
-          Tất cả lớp
+          All classes
         </Text>
       </Pressable>
       {classes.map((c) => (
@@ -125,7 +122,7 @@ export default function AnnouncementsScreen(): React.ReactElement {
         className="flex-1 bg-slate-50 dark:bg-slate-900"
         edges={['top']}
       >
-        <Loading text="Đang tải thông báo..." />
+        <Loading text="Loading notifications..." />
       </SafeAreaView>
     );
   }
@@ -137,7 +134,7 @@ export default function AnnouncementsScreen(): React.ReactElement {
         edges={['top']}
       >
         <ErrorView
-          error={error ?? 'Không thể tải thông báo'}
+          error={error ?? 'Could not load notifications'}
           onRetry={() => {
             void refetch();
           }}
@@ -183,7 +180,7 @@ export default function AnnouncementsScreen(): React.ReactElement {
                   className="text-slate-900 dark:text-white font-bold text-base"
                   numberOfLines={1}
                 >
-                  {item.title || 'Thông báo'}
+                  {item.title || 'Notifications'}
                 </Text>
                 <Text
                   className="text-slate-500 dark:text-slate-400 text-sm mt-1"
@@ -209,7 +206,7 @@ export default function AnnouncementsScreen(): React.ReactElement {
           <View className="flex-1 min-h-[400px]">
             <EmptyState
               icon={<Megaphone size={48} color="#94a3b8" />}
-              title="Chưa có thông báo"
+              title="No notifications"
             />
           </View>
         }

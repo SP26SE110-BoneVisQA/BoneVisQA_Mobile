@@ -6,9 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import {
   BadgeCheck,
-  Check,
   ChevronRight,
-  Globe,
   Info,
   LogOut,
   Lock,
@@ -22,7 +20,6 @@ import Card from '../../../components/common/Card';
 import { useAuthStore } from '../../../stores/authStore';
 import {
   useSettingsStore,
-  type AppLanguage,
   type AppTheme,
 } from '../../../stores/settingsStore';
 import type { ProfileStackParamList } from '../../../navigation/types';
@@ -35,32 +32,20 @@ interface ThemeOption {
   icon: React.ReactNode;
 }
 
-interface LanguageOption {
-  value: AppLanguage;
-  label: string;
-}
-
 const THEME_OPTIONS: ThemeOption[] = [
-  { value: 'light', label: 'Sáng', icon: <Sun size={18} color="#14b8a6" /> },
-  { value: 'dark', label: 'Tối', icon: <Moon size={18} color="#14b8a6" /> },
+  { value: 'light', label: 'Light', icon: <Sun size={18} color="#14b8a6" /> },
+  { value: 'dark', label: 'Dark', icon: <Moon size={18} color="#14b8a6" /> },
   {
     value: 'system',
-    label: 'Theo hệ thống',
+    label: 'System',
     icon: <Monitor size={18} color="#14b8a6" />,
   },
-];
-
-const LANGUAGE_OPTIONS: LanguageOption[] = [
-  { value: 'vi', label: 'Tiếng Việt' },
-  { value: 'en', label: 'English' },
 ];
 
 export default function SettingsScreen(): React.ReactElement {
   const navigation = useNavigation<Navigation>();
   const queryClient = useQueryClient();
-  const language = useSettingsStore((s) => s.language);
   const theme = useSettingsStore((s) => s.theme);
-  const setLanguage = useSettingsStore((s) => s.setLanguage);
   const setTheme = useSettingsStore((s) => s.setTheme);
 
   const appVersion =
@@ -68,12 +53,12 @@ export default function SettingsScreen(): React.ReactElement {
 
   const handleLogout = useCallback(() => {
     Alert.alert(
-      'Đăng xuất',
-      'Bạn có chắc muốn đăng xuất?',
+      'Log out',
+      'Are you sure you want to log out?',
       [
-        { text: 'Hủy', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Đăng xuất',
+          text: 'Log out',
           style: 'destructive',
           onPress: () => {
             void (async () => {
@@ -90,7 +75,7 @@ export default function SettingsScreen(): React.ReactElement {
   const handleAbout = useCallback(() => {
     Alert.alert(
       'BoneVisQA Mobile',
-      `Phiên bản ${appVersion}\nNền tảng hỏi đáp và trực quan hóa hình ảnh y khoa dành cho sinh viên y.`,
+      `Version ${appVersion}\nMedical image visualization and Q&A platform for medical students.`,
       [{ text: 'OK' }],
     );
   }, [appVersion]);
@@ -99,65 +84,22 @@ export default function SettingsScreen(): React.ReactElement {
     <Screen scroll>
       <View className="flex-1">
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-          Cài đặt
+          Settings
         </Text>
 
         {/* Appearance */}
         <Text className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
-          Giao diện
+          Appearance
         </Text>
 
         <Card className="mb-4 py-0 px-0">
-          <View className="px-4 py-3 border-b border-slate-100 dark:border-slate-700/60">
-            <View className="flex-row items-center mb-2">
-              <View className="w-8 h-8 rounded-lg bg-primary/10 items-center justify-center mr-3">
-                <Globe size={16} color="#14b8a6" />
-              </View>
-              <Text className="text-slate-900 dark:text-white text-sm font-semibold">
-                Ngôn ngữ
-              </Text>
-            </View>
-            <View className="flex-row gap-2 ml-11">
-              {LANGUAGE_OPTIONS.map((opt) => {
-                const selected = language === opt.value;
-                return (
-                  <Pressable
-                    key={opt.value}
-                    onPress={() => {
-                      void setLanguage(opt.value);
-                    }}
-                    className={[
-                      'flex-row items-center px-3 py-2 rounded-xl border',
-                      selected
-                        ? 'bg-primary/15 border-primary'
-                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700',
-                    ].join(' ')}
-                  >
-                    {selected ? (
-                      <Check size={13} color="#0d9488" />
-                    ) : null}
-                    <Text
-                      className={[
-                        'text-sm font-medium',
-                        selected
-                          ? 'ml-1 text-primary-dark'
-                          : 'text-slate-700 dark:text-slate-300',
-                      ].join(' ')}
-                    >
-                      {opt.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-          </View>
           <View className="px-4 py-3">
             <View className="flex-row items-center mb-2">
               <View className="w-8 h-8 rounded-lg bg-primary/10 items-center justify-center mr-3">
                 <Monitor size={16} color="#14b8a6" />
               </View>
               <Text className="text-slate-900 dark:text-white text-sm font-semibold">
-                Chủ đề
+                Theme
               </Text>
             </View>
             <View className="flex-row flex-wrap gap-2 ml-11">
@@ -196,7 +138,7 @@ export default function SettingsScreen(): React.ReactElement {
 
         {/* Account */}
         <Text className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
-          Tài khoản
+          Account
         </Text>
         <Card className="mb-4 py-0 px-0">
           <Pressable
@@ -207,7 +149,7 @@ export default function SettingsScreen(): React.ReactElement {
               <Lock size={18} color="#14b8a6" />
             </View>
             <Text className="flex-1 text-slate-900 dark:text-white text-base font-medium">
-              Đổi mật khẩu
+              Change password
             </Text>
             <ChevronRight size={18} color="#94a3b8" />
           </Pressable>
@@ -219,7 +161,7 @@ export default function SettingsScreen(): React.ReactElement {
               <BadgeCheck size={18} color="#14b8a6" />
             </View>
             <Text className="flex-1 text-slate-900 dark:text-white text-base font-medium">
-              Xác minh y khoa
+              Medical verification
             </Text>
             <ChevronRight size={18} color="#94a3b8" />
           </Pressable>
@@ -227,7 +169,7 @@ export default function SettingsScreen(): React.ReactElement {
 
         {/* Other */}
         <Text className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
-          Khác
+          Other
         </Text>
         <Card className="mb-8 py-0 px-0">
           <Pressable
@@ -239,10 +181,10 @@ export default function SettingsScreen(): React.ReactElement {
             </View>
             <View className="flex-1">
               <Text className="text-slate-900 dark:text-white text-base font-medium">
-                Giới thiệu
+                About
               </Text>
               <Text className="text-slate-500 dark:text-slate-400 text-xs">
-                Phiên bản {appVersion}
+                Version {appVersion}
               </Text>
             </View>
             <ChevronRight size={18} color="#94a3b8" />
@@ -255,7 +197,7 @@ export default function SettingsScreen(): React.ReactElement {
               <LogOut size={18} color="#ef4444" />
             </View>
             <Text className="flex-1 text-destructive text-base font-medium">
-              Đăng xuất
+              Log out
             </Text>
           </Pressable>
         </Card>

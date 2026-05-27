@@ -27,14 +27,14 @@ function formatDueDate(due: string | undefined): string {
 function statusLabel(status: Quiz['status']): string {
   switch (status) {
     case 'completed':
-      return 'Đã hoàn thành';
+      return 'Completed';
     case 'in_progress':
-      return 'Đang làm';
+      return 'In progress';
     case 'practice':
-      return 'Luyện tập';
+      return 'Practice';
     case 'assigned':
     default:
-      return 'Được giao';
+      return 'Assigned';
   }
 }
 
@@ -75,7 +75,7 @@ export function QuizCardListItem({
               className="flex-1 pr-2 text-base font-semibold text-slate-900 dark:text-white"
               numberOfLines={2}
             >
-              {quiz.title || 'Bài quiz'}
+              {quiz.title || 'Quiz'}
             </Text>
             <ChevronRight size={18} color="#94a3b8" />
           </View>
@@ -91,8 +91,8 @@ export function QuizCardListItem({
             <View className="flex-row items-center">
               <Clock size={12} color="#64748b" />
               <Text className="text-xs text-slate-500 ml-1">
-                {quiz.questionCount} câu
-                {quiz.durationMinutes ? ` · ${quiz.durationMinutes} phút` : ''}
+                {quiz.questionCount} questions
+                {quiz.durationMinutes ? ` · ${quiz.durationMinutes} minutes` : ''}
               </Text>
             </View>
             {dueText ? (

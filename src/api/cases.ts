@@ -91,7 +91,7 @@ function resolveImageUrl(value?: string | null): string | undefined {
 function mapListItemToCase(dto: CaseListItemDto): Case {
   return {
     id: dto.id,
-    title: dto.title ?? 'Không có tiêu đề',
+    title: dto.title ?? 'Untitled',
     description: dto.description ?? undefined,
     bodyRegion: dto.categoryName ?? undefined,
     categoryName: dto.categoryName ?? undefined,
@@ -131,7 +131,7 @@ function mapDetailToCase(dto: CaseDetailDto): Case {
   const firstModality = images.find((img) => img.modality)?.modality;
   return {
     id: dto.id,
-    title: dto.title ?? 'Không có tiêu đề',
+    title: dto.title ?? 'Untitled',
     description: dto.description ?? undefined,
     bodyRegion: dto.categoryName ?? undefined,
     categoryName: dto.categoryName ?? undefined,
@@ -149,7 +149,7 @@ function mapDetailToCase(dto: CaseDetailDto): Case {
 function mapHistoryItemToCase(dto: StudentCaseHistoryItemDto): Case {
   return {
     id: dto.caseId,
-    title: dto.caseTitle ?? 'Không có tiêu đề',
+    title: dto.caseTitle ?? 'Untitled',
     description: dto.latestQuestionText ?? undefined,
     bodyRegion: dto.categoryName ?? undefined,
     categoryName: dto.categoryName ?? undefined,

@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   Pressable,
+  Text,
   TextInput,
   View,
 } from 'react-native';
@@ -13,6 +14,7 @@ export interface ChatInputProps {
   onSend: (text: string, imageUri?: string) => void;
   loading?: boolean;
   placeholder?: string;
+  requireImage?: boolean;
   className?: string;
   testID?: string;
 }
@@ -20,7 +22,8 @@ export interface ChatInputProps {
 export function ChatInput({
   onSend,
   loading = false,
-  placeholder = 'Nhập câu hỏi về X-quang...',
+  placeholder = 'Type your X-ray question...',
+  requireImage = false,
   className,
   testID,
 }: ChatInputProps): React.ReactElement {
@@ -52,7 +55,8 @@ export function ChatInput({
     setImageUri(undefined);
   };
 
-  const canSend = text.trim().length > 0 && !loading;
+  const canSend =
+    text.trim().length > 0 && !loading && (!requireImage || Boolean(imageUri));
 
   return (
     <View
@@ -78,6 +82,11 @@ export function ChatInput({
             </Pressable>
           </View>
         </View>
+      ) : null}
+      {requireImage && !imageUri ? (
+        <Text className="text-xs text-amber-700 mb-2 px-1">
+          Please upload an X-ray image before asking AI outside a case.
+        </Text>
       ) : null}
       <View className="flex-row items-end">
         <Pressable

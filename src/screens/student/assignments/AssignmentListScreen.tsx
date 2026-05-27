@@ -25,21 +25,21 @@ type NavProp = NativeStackNavigationProp<
 >;
 
 const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  pending: 'Chưa nộp',
-  overdue: 'Quá hạn',
-  submitted: 'Đã nộp',
-  graded: 'Đã chấm',
+  pending: 'Not submitted',
+  overdue: 'Overdue',
+  submitted: 'Submitted',
+  graded: 'Graded',
 };
 
 function formatDate(iso: string | undefined): string {
   if (!iso) {
-    return 'Không có hạn';
+    return 'No due date';
   }
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) {
-    return 'Không có hạn';
+    return 'No due date';
   }
-  return date.toLocaleDateString('vi-VN', {
+  return date.toLocaleDateString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -133,11 +133,11 @@ function AssignmentCard({
                 : 'text-slate-500 dark:text-slate-400',
             ].join(' ')}
           >
-            Hạn nộp: {formatDate(assignment.dueDate)}
+            Due: {formatDate(assignment.dueDate)}
           </Text>
           {assignment.submittedAt ? (
             <Text className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Đã nộp: {formatDate(assignment.submittedAt)}
+              Submitted: {formatDate(assignment.submittedAt)}
             </Text>
           ) : null}
         </View>
@@ -165,7 +165,7 @@ export default function AssignmentListScreen(): React.ReactElement {
   if (assignments.isLoading && !assignments.data) {
     return (
       <Screen>
-        <Loading text="Đang tải assignments..." />
+        <Loading text="Loading assignments..." />
       </Screen>
     );
   }
@@ -188,18 +188,18 @@ export default function AssignmentListScreen(): React.ReactElement {
           Assignments
         </Text>
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-          Bài tự luận
+          Written assignments
         </Text>
         <Text className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-          Viết câu trả lời dạng text và nộp trực tiếp trong ứng dụng.
+          Write text answers and submit them directly in the app.
         </Text>
       </View>
 
       {sortedAssignments.length === 0 ? (
         <EmptyState
           icon={<ClipboardList size={32} color="#94a3b8" />}
-          title="Chưa có assignment"
-          subtitle="Các bài tự luận được giao sẽ xuất hiện tại đây."
+          title="No assignments yet"
+          subtitle="Assigned written work will appear here."
         />
       ) : (
         <View>
@@ -220,7 +220,7 @@ export default function AssignmentListScreen(): React.ReactElement {
       <View className="mt-2 flex-row items-center">
         <FileText size={14} color="#64748b" />
         <Text className="text-xs text-slate-500 dark:text-slate-400 ml-2">
-          Assignment tự luận chỉ nhận nội dung text.
+          Written assignments only accept text content.
         </Text>
       </View>
     </Screen>

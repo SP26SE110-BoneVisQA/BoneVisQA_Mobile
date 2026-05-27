@@ -48,7 +48,7 @@ export function MessageBubble({
         <View className="flex-row items-center py-1">
           <ActivityIndicator size="small" color="#14b8a6" />
           <Text className="ml-2 text-slate-500 dark:text-slate-300 text-sm">
-            AI đang phân tích...
+            AI is analyzing...
           </Text>
         </View>
       ) : isUser ? (
@@ -89,7 +89,7 @@ export function MessageBubble({
       {!message.isLoading && message.references && message.references.length > 0 ? (
         <View className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
           <Text className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mb-1">
-            Tham khảo
+            References
           </Text>
           {message.references.map((ref, idx) => (
             <Text

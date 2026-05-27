@@ -40,13 +40,13 @@ function formatGender(gender: string | null): string | null {
   }
   const normalized = gender.toLowerCase();
   if (normalized === 'male' || normalized === 'nam') {
-    return 'Nam';
+    return 'Male';
   }
-  if (normalized === 'female' || normalized === 'nữ' || normalized === 'nu') {
-    return 'Nữ';
+  if (normalized === 'female' || normalized === 'n\u1eef' || normalized === 'nu') {
+    return 'Female';
   }
-  if (normalized === 'other' || normalized === 'khác') {
-    return 'Khác';
+  if (normalized === 'other' || normalized === 'kh\u00e1c') {
+    return 'Other';
   }
   return gender;
 }
@@ -67,12 +67,12 @@ export default function ProfileScreen(): React.ReactElement {
 
   const handleLogout = useCallback(() => {
     Alert.alert(
-      'Đăng xuất',
-      'Bạn có chắc muốn đăng xuất khỏi tài khoản?',
+      'Log out',
+      'Are you sure you want to sign out?',
       [
-        { text: 'Hủy', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Đăng xuất',
+          text: 'Log out',
           style: 'destructive',
           onPress: () => {
             void (async () => {
@@ -89,37 +89,37 @@ export default function ProfileScreen(): React.ReactElement {
   const menu: MenuItem[] = [
     {
       key: 'edit',
-      label: 'Chỉnh sửa hồ sơ',
+      label: 'Edit profile',
       icon: <Pencil size={20} color="#14b8a6" />,
       onPress: () => navigation.navigate('EditProfile'),
     },
     {
       key: 'medical',
-      label: 'Xác minh y khoa',
+      label: 'Medical verification',
       icon: <BadgeCheck size={20} color="#14b8a6" />,
       onPress: () => navigation.navigate('MedicalVerification'),
     },
     {
       key: 'classes',
-      label: 'Lớp học',
+      label: 'Classes',
       icon: <Users size={20} color="#14b8a6" />,
       onPress: () => navigation.navigate('Classes'),
     },
     {
       key: 'settings',
-      label: 'Cài đặt',
+      label: 'Settings',
       icon: <SettingsIcon size={20} color="#14b8a6" />,
       onPress: () => navigation.navigate('Settings'),
     },
     {
       key: 'password',
-      label: 'Đổi mật khẩu',
+      label: 'Change password',
       icon: <Lock size={20} color="#14b8a6" />,
       onPress: () => navigation.navigate('ChangePassword'),
     },
     {
       key: 'logout',
-      label: 'Đăng xuất',
+      label: 'Log out',
       icon: <LogOut size={20} color="#ef4444" />,
       onPress: handleLogout,
       destructive: true,
@@ -129,7 +129,7 @@ export default function ProfileScreen(): React.ReactElement {
   if (isPending) {
     return (
       <Screen>
-        <Loading text="Đang tải hồ sơ..." />
+        <Loading text="Loading profile..." />
       </Screen>
     );
   }
@@ -149,7 +149,7 @@ export default function ProfileScreen(): React.ReactElement {
     >
       <View className="flex-1">
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-          Hồ sơ
+          Profile
         </Text>
 
         <ProfileHeader
@@ -160,24 +160,24 @@ export default function ProfileScreen(): React.ReactElement {
           cohort={data.schoolCohort}
         />
 
-        <ProfileSection title="Thông tin cá nhân">
+        <ProfileSection title="Personal information">
           <ProfileField
-            label="Họ và tên"
+            label="Full name"
             value={data.fullName}
             icon={<UserIcon size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Ngày sinh"
+            label="Date of birth"
             value={data.dateOfBirth}
             icon={<Calendar size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Giới tính"
+            label="Gender"
             value={formatGender(data.gender)}
             icon={<Users size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Số điện thoại"
+            label="Phone number"
             value={data.phoneNumber}
             icon={<Phone size={16} color="#14b8a6" />}
           />
@@ -188,44 +188,44 @@ export default function ProfileScreen(): React.ReactElement {
           />
         </ProfileSection>
 
-        <ProfileSection title="Học tập">
+        <ProfileSection title="Education">
           <ProfileField
-            label="Mã sinh viên"
+            label="Student ID"
             value={data.studentSchoolId}
             icon={<Hash size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Khóa"
+            label="Harda"
             value={data.schoolCohort}
             icon={<GraduationCap size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Lớp học"
+            label="Classes"
             value={data.classCode}
             icon={<Users size={16} color="#14b8a6" />}
           />
         </ProfileSection>
 
-        <ProfileSection title="Liên hệ">
+        <ProfileSection title="Contact">
           <ProfileField
-            label="Địa chỉ"
+            label="Address"
             value={data.address}
             icon={<MapPin size={16} color="#14b8a6" />}
           />
           <ProfileField
-            label="Liên hệ khẩn cấp"
+            label="Emergency contact"
             value={data.emergencyContact}
             icon={<Heart size={16} color="#14b8a6" />}
           />
         </ProfileSection>
 
-        <ProfileSection title="Giới thiệu">
-          <ProfileField label="Tiểu sử" value={data.bio} />
+        <ProfileSection title="About">
+          <ProfileField label="Bio" value={data.bio} />
         </ProfileSection>
 
         <View className="mb-4">
           <Text className="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider mb-2 ml-1">
-            Thao tác
+            Actions
           </Text>
           <Card className="py-0 px-0">
             {menu.map((item, idx) => (

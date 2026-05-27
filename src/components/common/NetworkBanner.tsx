@@ -29,7 +29,7 @@ export function NetworkBanner({
       ].join(' ')}
     >
       <Text className="text-white text-center text-sm font-medium">
-        Không có kết nối mạng
+        No network connection
       </Text>
     </View>
   );

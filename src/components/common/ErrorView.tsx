@@ -39,13 +39,13 @@ export function ErrorView({
         <AlertCircle size={32} color="#ef4444" />
       </View>
       <Text className="text-slate-900 dark:text-white text-lg font-semibold mb-2 text-center">
-        Đã xảy ra lỗi
+        Something went wrong
       </Text>
       <Text className="text-slate-500 dark:text-slate-400 text-sm text-center mb-6">
         {getMessage(error)}
       </Text>
       {onRetry ? (
-        <Button label="Thử lại" variant="primary" size="md" onPress={onRetry} />
+        <Button label="Retry" variant="primary" size="md" onPress={onRetry} />
       ) : null}
     </View>
   );

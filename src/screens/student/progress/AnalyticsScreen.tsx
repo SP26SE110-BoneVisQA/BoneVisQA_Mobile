@@ -95,7 +95,7 @@ export default function AnalyticsScreen(): React.ReactElement {
   if (isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải phân tích…" />
+        <Loading text="Loading analytics..." />
       </Screen>
     );
   }
@@ -112,8 +112,8 @@ export default function AnalyticsScreen(): React.ReactElement {
     return (
       <Screen>
         <EmptyState
-          title="Không có dữ liệu"
-          subtitle="Hoàn thành thêm bài quiz để xem phân tích."
+          title="No data"
+          subtitle="Complete more quizzes to view analytics."
         />
       </Screen>
     );
@@ -122,22 +122,22 @@ export default function AnalyticsScreen(): React.ReactElement {
   return (
     <Screen scroll>
       <Text className="text-xs uppercase tracking-widest text-primary font-semibold">
-        Phân tích
+        Analytics
       </Text>
       <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4 mt-1">
-        Hiệu suất tổng thể
+        Overall performance
       </Text>
 
       <View className="flex-row gap-3 mb-3">
         <StatCard
           icon={<Trophy size={18} color="#059669" />}
-          label="Điểm TB"
+          label="Score TB"
           value={(data.averageQuizScore ?? 0).toFixed(1)}
           tone="emerald"
         />
         <StatCard
           icon={<TrendingUp size={18} color="#14b8a6" />}
-          label="Lần thử quiz"
+          label="Quiz attempts"
           value={String(data.quizAttempts ?? 0)}
           tone="primary"
         />
@@ -145,13 +145,13 @@ export default function AnalyticsScreen(): React.ReactElement {
       <View className="flex-row gap-3 mb-4">
         <StatCard
           icon={<BookOpen size={18} color="#0284c7" />}
-          label="Ca đã xem"
+          label="Cases viewed"
           value={String(data.casesViewed ?? 0)}
           tone="slate"
         />
         <StatCard
           icon={<MessageSquare size={18} color="#8b5cf6" />}
-          label="Câu hỏi AI"
+          label="Question AI"
           value={String(data.questionsAsked ?? 0)}
           tone="slate"
         />
@@ -159,12 +159,12 @@ export default function AnalyticsScreen(): React.ReactElement {
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
-          Điểm trung bình theo tuần
+          Average score by week
         </Text>
         {data.weeklyScores.length === 0 ? (
           <EmptyState
-            title="Chưa có dữ liệu theo tuần"
-            subtitle="Dữ liệu sẽ xuất hiện khi bạn làm bài đều đặn."
+            title="No weekly data yet"
+            subtitle="Data will appear as you practice regularly."
           />
         ) : (
           <BarChart data={data.weeklyScores} />
@@ -173,30 +173,30 @@ export default function AnalyticsScreen(): React.ReactElement {
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
-          Điểm mạnh
+          Strengths
         </Text>
-        <ChipRow items={data.strengths} tone="emerald" emptyLabel="Chưa xác định" />
+        <ChipRow items={data.strengths} tone="emerald" emptyLabel="Not identified yet" />
       </Card>
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
-          Cần cải thiện
+          Needs improvement
         </Text>
-        <ChipRow items={data.weaknesses} tone="rose" emptyLabel="Chưa xác định" />
+        <ChipRow items={data.weaknesses} tone="rose" emptyLabel="Not identified yet" />
       </Card>
 
       <Text className="text-xl font-bold text-slate-900 dark:text-white mt-2 mb-3">
-        Phân tích nâng cao
+        Advanced analytics
       </Text>
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-2">
-          Tổng quan học tập
+          Learning overview
         </Text>
         {dashboard.isLoading ? (
-          <Loading text="Đang tải tổng quan..." />
+          <Loading text="Loading overview..." />
         ) : dashboard.isError ? (
-          <Text className="text-xs text-slate-500">Không thể tải tổng quan lúc này.</Text>
+          <Text className="text-xs text-slate-500">Unable to load the overview right now.</Text>
         ) : (
           <View>
             {dashboard.data?.title ? (
@@ -205,12 +205,12 @@ export default function AnalyticsScreen(): React.ReactElement {
             <View className="flex-row gap-4">
               {typeof dashboard.data?.completionRate === 'number' ? (
                 <Text className="text-xs text-slate-600">
-                  Hoàn thành: {dashboard.data.completionRate.toFixed(0)}%
+                  Completed: {dashboard.data.completionRate.toFixed(0)}%
                 </Text>
               ) : null}
               {typeof dashboard.data?.accuracyRate === 'number' ? (
                 <Text className="text-xs text-slate-600">
-                  Chính xác: {dashboard.data.accuracyRate.toFixed(0)}%
+                  Accuracy: {dashboard.data.accuracyRate.toFixed(0)}%
                 </Text>
               ) : null}
             </View>
@@ -223,12 +223,12 @@ export default function AnalyticsScreen(): React.ReactElement {
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
-          Năng lực
+          Competencies
         </Text>
         {competencies.isLoading ? (
-          <Loading text="Đang tải năng lực..." />
+          <Loading text="Loading competencies..." />
         ) : (competencies.data ?? []).length === 0 ? (
-          <Text className="text-xs text-slate-500">Chưa có dữ liệu năng lực.</Text>
+          <Text className="text-xs text-slate-500">No competency data yet.</Text>
         ) : (
           competencies.data?.map((item) => (
             <View key={item.id} className="flex-row justify-between py-2">
@@ -243,12 +243,12 @@ export default function AnalyticsScreen(): React.ReactElement {
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
-          Lỗi lặp lại
+          Repeated mistakes
         </Text>
         {patterns.isLoading ? (
-          <Loading text="Đang tải mẫu lỗi..." />
+          <Loading text="Loading mistake patterns..." />
         ) : (patterns.data ?? []).length === 0 ? (
-          <Text className="text-xs text-slate-500">Không có mẫu lỗi cần xử lý.</Text>
+          <Text className="text-xs text-slate-500">No mistake patterns to resolve.</Text>
         ) : (
           patterns.data?.map((pattern) => (
             <View key={pattern.id} className="border-b border-slate-100 py-2">
@@ -259,7 +259,7 @@ export default function AnalyticsScreen(): React.ReactElement {
               {!pattern.resolved ? (
                 <View className="mt-2 self-start">
                   <Button
-                    label="Đánh dấu đã xử lý"
+                    label="Mark as resolved"
                     size="sm"
                     variant="outline"
                     loading={resolvePattern.isPending}
@@ -267,7 +267,7 @@ export default function AnalyticsScreen(): React.ReactElement {
                   />
                 </View>
               ) : (
-                <Text className="text-xs text-emerald-600 mt-1">Đã xử lý</Text>
+                <Text className="text-xs text-emerald-600 mt-1">Resolved</Text>
               )}
             </View>
           ))
@@ -276,12 +276,12 @@ export default function AnalyticsScreen(): React.ReactElement {
 
       <Card className="mb-4">
         <Text className="text-base font-semibold text-slate-900 dark:text-white mb-3">
-          Gợi ý cá nhân
+          Personal suggestions
         </Text>
         {insights.isLoading ? (
-          <Loading text="Đang tải gợi ý..." />
+          <Loading text="Loading suggestions..." />
         ) : (insights.data ?? []).length === 0 ? (
-          <Text className="text-xs text-slate-500">Chưa có gợi ý mới.</Text>
+          <Text className="text-xs text-slate-500">No new suggestions yet.</Text>
         ) : (
           insights.data?.map((insight) => (
             <View key={insight.id} className="border-b border-slate-100 py-2">
@@ -292,7 +292,7 @@ export default function AnalyticsScreen(): React.ReactElement {
               <View className="flex-row gap-2 mt-2">
                 {!insight.isRead ? (
                   <Button
-                    label="Đã đọc"
+                    label="Read"
                     size="sm"
                     variant="outline"
                     loading={markRead.isPending}
@@ -301,7 +301,7 @@ export default function AnalyticsScreen(): React.ReactElement {
                 ) : null}
                 {!insight.isActioned ? (
                   <Button
-                    label={insight.actionLabel ?? 'Thực hiện'}
+                    label={insight.actionLabel ?? 'Take action'}
                     size="sm"
                     loading={actionInsight.isPending}
                     onPress={() => actionInsight.mutate(insight.id)}

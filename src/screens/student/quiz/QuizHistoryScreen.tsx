@@ -25,7 +25,7 @@ function formatDate(iso: string | undefined): string {
   if (Number.isNaN(d.getTime())) {
     return '—';
   }
-  return d.toLocaleDateString('vi-VN', {
+  return d.toLocaleDateString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -49,7 +49,7 @@ function AttemptRow({ item, onPress, onDelete }: RowProps): React.ReactElement {
             className="text-base font-semibold text-slate-900 dark:text-white"
             numberOfLines={1}
           >
-            {item.quizTitle ?? 'Bài quiz'}
+            {item.quizTitle ?? 'Quiz'}
           </Text>
           <Text className="text-xs text-slate-500 mt-1">{date}</Text>
           <View className="flex-row items-center gap-2 mt-2">
@@ -57,7 +57,7 @@ function AttemptRow({ item, onPress, onDelete }: RowProps): React.ReactElement {
             {isDraft ? (
               <View className="px-2 py-0.5 rounded-full bg-amber-100">
                 <Text className="text-xs font-semibold text-amber-700">
-                  Bản nháp
+                  Draft
                 </Text>
               </View>
             ) : null}
@@ -86,19 +86,19 @@ export default function QuizHistoryScreen(): React.ReactElement {
 
   const handleDelete = useCallback(
     (attemptId: string): void => {
-      Alert.alert('Xoá bản nháp?', 'Bạn có chắc muốn xoá bài làm chưa hoàn thành này?', [
-        { text: 'Huỷ', style: 'cancel' },
+      Alert.alert('Delete draft?', 'Are you sure you want to delete this unfinished attempt?', [
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Xoá',
+          text: 'Delete',
           style: 'destructive',
           onPress: async () => {
             try {
               await deleteAttempt.mutateAsync(attemptId);
-              Toast.show({ type: 'success', text1: 'Đã xoá bản nháp' });
+              Toast.show({ type: 'success', text1: 'Draft deleted' });
             } catch (err) {
               Toast.show({
                 type: 'error',
-                text1: 'Xoá thất bại',
+                text1: 'Delete failed',
                 text2: (err as { message?: string }).message,
               });
             }
@@ -111,7 +111,7 @@ export default function QuizHistoryScreen(): React.ReactElement {
 
   const renderEmpty = (): React.ReactElement => {
     if (history.isLoading) {
-      return <Loading text="Đang tải lịch sử…" />;
+      return <Loading text="Loading history..." />;
     }
     if (history.isError && history.error) {
       return (
@@ -120,8 +120,8 @@ export default function QuizHistoryScreen(): React.ReactElement {
     }
     return (
       <EmptyState
-        title="Chưa có lịch sử"
-        subtitle="Các bài làm đã nộp sẽ xuất hiện ở đây."
+        title="No history yet"
+        subtitle="Submitted attempts will appear here."
       />
     );
   };

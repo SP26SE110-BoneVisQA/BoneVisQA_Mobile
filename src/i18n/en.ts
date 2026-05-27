@@ -1,6 +1,4 @@
-import type { Translations } from './vi';
-
-export const en: Translations = {
+export const en = {
   common: {
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -143,9 +141,6 @@ export const en: Translations = {
   },
   settings: {
     title: 'Settings',
-    language: 'Language',
-    languageVi: 'Tiếng Việt',
-    languageEn: 'English',
     theme: 'Theme',
     themeLight: 'Light',
     themeDark: 'Dark',

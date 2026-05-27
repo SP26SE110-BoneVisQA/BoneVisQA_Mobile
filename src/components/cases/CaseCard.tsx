@@ -12,9 +12,9 @@ export interface CaseCardProps {
 }
 
 const difficultyLabel: Record<CaseDifficulty, string> = {
-  easy: 'Dễ',
-  medium: 'Trung bình',
-  hard: 'Khó',
+  easy: 'Easy',
+  medium: 'Medium',
+  hard: 'Hard',
 };
 
 const difficultyBg: Record<CaseDifficulty, string> = {

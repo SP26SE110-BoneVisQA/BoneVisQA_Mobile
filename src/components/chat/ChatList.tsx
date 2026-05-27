@@ -22,8 +22,8 @@ export function ChatList({
   messages,
   className,
   testID,
-  emptyTitle = 'Hãy hỏi câu đầu tiên về X-quang',
-  emptySubtitle = 'Bạn có thể đính kèm hình ảnh hoặc đặt câu hỏi về ca lâm sàng hiện tại.',
+  emptyTitle = 'Ask your first X-ray question',
+  emptySubtitle = 'You can attach an image or ask about the current clinical case.',
 }: ChatListProps): React.ReactElement {
   // We render inverted: newest at bottom. FlatList inverts the array.
   const inverted = React.useMemo<VisualQaMessage[]>(

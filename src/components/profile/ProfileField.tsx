@@ -12,7 +12,7 @@ export function ProfileField({
   label,
   value,
   icon,
-  emptyText = 'Chưa cập nhật',
+  emptyText = 'Not updated',
 }: ProfileFieldProps): React.ReactElement {
   const displayValue =
     value && value.trim().length > 0 ? value : emptyText;

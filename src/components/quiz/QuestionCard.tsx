@@ -98,7 +98,7 @@ export function QuestionCard({
     <View className="w-full">
       {typeof questionNumber === 'number' && typeof totalQuestions === 'number' ? (
         <Text className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
-          Câu {questionNumber} / {totalQuestions}
+          Question {questionNumber} / {totalQuestions}
         </Text>
       ) : null}
       {question.caseTitle ? (
@@ -128,7 +128,7 @@ export function QuestionCard({
       ))}
       {allowMultiple ? (
         <Text className="text-xs text-slate-500 mt-1">
-          Chọn tất cả đáp án đúng.
+          Select all correct answers.
         </Text>
       ) : null}
     </View>

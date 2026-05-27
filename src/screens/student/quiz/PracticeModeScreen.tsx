@@ -28,9 +28,9 @@ interface DifficultyDef {
 }
 
 const DIFFICULTIES: ReadonlyArray<DifficultyDef> = [
-  { key: 'easy', label: 'Dễ' },
-  { key: 'medium', label: 'Trung bình' },
-  { key: 'hard', label: 'Khó' },
+  { key: 'easy', label: 'Easy' },
+  { key: 'medium', label: 'Medium' },
+  { key: 'hard', label: 'Hard' },
 ];
 
 const MIN_COUNT = 5;
@@ -55,7 +55,7 @@ export default function PracticeModeScreen(): React.ReactElement {
   const handleSubmit = useCallback(async (): Promise<void> => {
     const trimmed = topic.trim();
     if (trimmed.length === 0) {
-      setTopicError('Vui lòng nhập chủ đề');
+      setTopicError('Please enter a topic');
       return;
     }
     setTopicError(undefined);
@@ -71,13 +71,13 @@ export default function PracticeModeScreen(): React.ReactElement {
         .catch(() => undefined);
       Toast.show({
         type: 'success',
-        text1: 'Đã tạo bài luyện tập',
+        text1: 'Practice quiz created',
       });
       navigation.replace('QuizPlay', { quizId: result.quizId });
     } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Tạo bài luyện tập thất bại',
+        text1: 'Failed to create practice quiz',
         text2: (err as { message?: string }).message,
       });
     }
@@ -99,17 +99,17 @@ export default function PracticeModeScreen(): React.ReactElement {
           </View>
           <View className="flex-1">
             <Text className="text-base font-semibold text-slate-900 dark:text-white">
-              Tạo bài luyện tập
+              Create practice quiz
             </Text>
             <Text className="text-xs text-slate-500 mt-0.5">
-              AI sẽ sinh câu hỏi theo chủ đề bạn chọn.
+              AI will generate questions based on your selected topic.
             </Text>
           </View>
         </View>
 
         <Input
-          label="Chủ đề"
-          placeholder="VD: Gãy xương cẳng tay"
+          label="Theme"
+          placeholder="Example: Forearm fracture"
           value={topic}
           onChangeText={(text) => {
             setTopic(text);
@@ -121,7 +121,7 @@ export default function PracticeModeScreen(): React.ReactElement {
         />
 
         <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mt-4 mb-1.5 ml-1">
-          Độ khó
+          Difficulty
         </Text>
         <View className="flex-row bg-slate-100 dark:bg-slate-800 rounded-2xl p-1">
           {DIFFICULTIES.map((d) => {
@@ -151,7 +151,7 @@ export default function PracticeModeScreen(): React.ReactElement {
         </View>
 
         <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mt-4 mb-1.5 ml-1">
-          Số câu hỏi
+          Number of questions
         </Text>
         <View className="flex-row items-center bg-slate-100 dark:bg-slate-800 rounded-2xl p-2">
           <Pressable
@@ -171,12 +171,12 @@ export default function PracticeModeScreen(): React.ReactElement {
           </Pressable>
         </View>
         <Text className="text-xs text-slate-400 mt-1 ml-1">
-          Từ {MIN_COUNT} đến {MAX_COUNT} câu
+          From {MIN_COUNT} to {MAX_COUNT} questions
         </Text>
 
         <View className="mt-4">
           <Button
-            label="Tạo bài luyện tập"
+            label="Create practice quiz"
             onPress={() => void handleSubmit()}
             loading={generate.isPending}
             leftIcon={<Sparkles size={16} color="#ffffff" />}
@@ -186,16 +186,16 @@ export default function PracticeModeScreen(): React.ReactElement {
       </Card>
 
       <Text className="text-base font-semibold text-slate-900 dark:text-white mb-2">
-        Bài luyện tập đã lưu
+        Saved practice quizzes
       </Text>
 
       {practiceList.isLoading ? (
-        <Loading text="Đang tải…" />
+        <Loading text="Loading…" />
       ) : existingPractice.length === 0 ? (
         <EmptyState
           icon={<Sparkles size={32} color="#94a3b8" />}
-          title="Chưa có bài lưu"
-          subtitle="Các bài luyện tập bạn tạo sẽ được lưu tại đây."
+          title="No saved quizzes yet"
+          subtitle="Practice quizzes you create will be saved here."
         />
       ) : (
         existingPractice.map((quiz) => (

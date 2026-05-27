@@ -33,15 +33,15 @@ function TopicBar({ stat }: TopicBarProps): React.ReactElement {
         <Text className="text-sm font-semibold text-slate-900 dark:text-white" numberOfLines={1}>
           {stat.topic}
         </Text>
-        <Text className="text-xs text-slate-500">{pct.toFixed(1)} điểm</Text>
+        <Text className="text-xs text-slate-500">{pct.toFixed(1)} points</Text>
       </View>
       <View className="h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
         <View className="h-2 bg-primary rounded-full" style={{ width: `${pct}%` }} />
       </View>
       <Text className="text-[11px] text-slate-400 mt-1">
-        {stat.completed} lần thử
+        {stat.completed} attempts
         {typeof stat.accuracyRate === 'number'
-          ? ` · Chính xác ${(stat.accuracyRate * 100).toFixed(0)}%`
+          ? ` · Accuracy ${(stat.accuracyRate * 100).toFixed(0)}%`
           : ''}
       </Text>
     </View>
@@ -89,7 +89,7 @@ export default function ProgressScreen(): React.ReactElement {
   if (progress.isLoading && !progress.data) {
     return (
       <Screen>
-        <Loading text="Đang tải tiến độ…" />
+        <Loading text="Loading progress..." />
       </Screen>
     );
   }
@@ -109,24 +109,24 @@ export default function ProgressScreen(): React.ReactElement {
   return (
     <Screen scroll refresh={{ refreshing, onRefresh }}>
       <Text className="text-xs uppercase tracking-widest text-primary font-semibold">
-        Tiến độ học tập
+        Learning progress
       </Text>
       <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4 mt-1">
-        Tổng quan
+        Overview
       </Text>
 
       <View className="flex-row gap-3 mb-4">
         <StatCard
           icon={<Trophy size={18} color="#059669" />}
-          label="Điểm TB"
+          label="Score TB"
           value={(summary?.averageScore ?? 0).toFixed(1)}
           tone="emerald"
         />
         <StatCard
           icon={<Target size={18} color="#14b8a6" />}
-          label="Đã hoàn thành"
+          label="Completed"
           value={String(summary?.completedQuizzes ?? 0)}
-          hint={`/${summary?.totalQuizzes ?? 0} lần thử`}
+          hint={`/${summary?.totalQuizzes ?? 0} attempts`}
           tone="primary"
         />
       </View>
@@ -134,13 +134,13 @@ export default function ProgressScreen(): React.ReactElement {
       <View className="flex-row gap-3 mb-5">
         <StatCard
           icon={<BookOpen size={18} color="#0284c7" />}
-          label="Ca đã xem"
+          label="Cases viewed"
           value={String(summary?.casesViewed ?? 0)}
           tone="slate"
         />
         <StatCard
           icon={<Brain size={18} color="#8b5cf6" />}
-          label="Câu hỏi AI"
+          label="Question AI"
           value={String(summary?.questionsAsked ?? 0)}
           tone="slate"
         />
@@ -149,15 +149,15 @@ export default function ProgressScreen(): React.ReactElement {
       <Card className="mb-4">
         <View className="flex-row items-center justify-between mb-3">
           <Text className="text-base font-semibold text-slate-900 dark:text-white">
-            Thống kê theo chủ đề
+            Topic statistics
           </Text>
         </View>
         {topics.isLoading ? (
-          <Loading text="Đang tải…" />
+          <Loading text="Loading…" />
         ) : topTopics.length === 0 ? (
           <EmptyState
-            title="Chưa có dữ liệu chủ đề"
-            subtitle="Hoàn thành vài bài quiz để xem thống kê."
+            title="No topic data yet"
+            subtitle="Complete a few quizzes to view statistics."
           />
         ) : (
           topTopics.map((t) => <TopicBar key={t.topic} stat={t} />)
@@ -167,15 +167,15 @@ export default function ProgressScreen(): React.ReactElement {
       <Card className="mb-4">
         <View className="flex-row items-center justify-between mb-2">
           <Text className="text-base font-semibold text-slate-900 dark:text-white">
-            Hoạt động gần đây
+            Recent activity
           </Text>
         </View>
         {recent.isLoading ? (
-          <Loading text="Đang tải…" />
+          <Loading text="Loading…" />
         ) : topActivities.length === 0 ? (
           <EmptyState
-            title="Chưa có hoạt động"
-            subtitle="Hãy bắt đầu một bài quiz hoặc đặt câu hỏi AI."
+            title="No activity yet"
+            subtitle="Start a quiz or ask AI a question."
           />
         ) : (
           topActivities.map((r) => <ActivityRow key={r.id} item={r} />)
@@ -183,7 +183,7 @@ export default function ProgressScreen(): React.ReactElement {
       </Card>
 
       <Button
-        label="Xem phân tích chi tiết"
+        label="View detailed analytics"
         variant="outline"
         onPress={() => navigation.navigate('Analytics')}
         leftIcon={<LineChart size={16} color="#14b8a6" />}

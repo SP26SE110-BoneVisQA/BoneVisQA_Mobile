@@ -29,16 +29,16 @@ import type { AuthStackParamList } from '../../navigation/types';
 
 const registerSchema = z
   .object({
-    fullName: z.string().min(2, 'Họ tên phải có ít nhất 2 ký tự'),
+    fullName: z.string().min(2, 'Full name must be at least 2 characters'),
     email: z
       .string()
-      .min(1, 'Vui lòng nhập email')
-      .email('Email không hợp lệ'),
-    password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự'),
-    confirmPassword: z.string().min(1, 'Vui lòng xác nhận mật khẩu'),
+      .min(1, 'Please enter your email')
+      .email('Invalid email'),
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Mật khẩu xác nhận không khớp',
+    message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
 
@@ -82,8 +82,8 @@ export default function RegisterScreen(): React.ReactElement {
               onError: () => {
                 Toast.show({
                   type: 'success',
-                  text1: 'Đăng ký thành công',
-                  text2: 'Vui lòng đăng nhập để tiếp tục',
+                  text1: 'Sign up successful',
+                  text2: 'Please log in to continue',
                 });
                 navigation.navigate('Login');
               },
@@ -93,7 +93,7 @@ export default function RegisterScreen(): React.ReactElement {
         onError: (error) => {
           Toast.show({
             type: 'error',
-            text1: 'Đăng ký thất bại',
+            text1: 'Sign up failed',
             text2: error.message,
           });
         },
@@ -123,10 +123,10 @@ export default function RegisterScreen(): React.ReactElement {
 
           <View className="mb-8">
             <Text className="text-3xl font-bold text-white mb-2">
-              Tạo tài khoản
+              Create account
             </Text>
             <Text className="text-slate-400">
-              Tham gia cổng học viên BoneVisQA
+              Join the BoneVisQA student portal
             </Text>
           </View>
 
@@ -136,8 +136,8 @@ export default function RegisterScreen(): React.ReactElement {
             render={({ field: { value, onChange, onBlur } }) => (
               <View className="mb-4">
                 <Input
-                  label="Họ và tên"
-                  placeholder="Nguyễn Văn A"
+                  label="Full name"
+                  placeholder="John Doe"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -174,8 +174,8 @@ export default function RegisterScreen(): React.ReactElement {
             render={({ field: { value, onChange, onBlur } }) => (
               <View className="mb-4">
                 <Input
-                  label="Mật khẩu"
-                  placeholder="Tối thiểu 8 ký tự"
+                  label="Password"
+                  placeholder="At least 8 characters"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -202,8 +202,8 @@ export default function RegisterScreen(): React.ReactElement {
             render={({ field: { value, onChange, onBlur } }) => (
               <View className="mb-6">
                 <Input
-                  label="Xác nhận mật khẩu"
-                  placeholder="Nhập lại mật khẩu"
+                  label="Confirm password"
+                  placeholder="Re-enter password"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -216,7 +216,7 @@ export default function RegisterScreen(): React.ReactElement {
           />
 
           <Button
-            label="Đăng ký"
+            label="Sign up"
             variant="primary"
             size="lg"
             fullWidth
@@ -225,13 +225,13 @@ export default function RegisterScreen(): React.ReactElement {
           />
 
           <View className="mt-6 flex-row justify-center items-center pb-8">
-            <Text className="text-slate-500 text-sm">Đã có tài khoản?</Text>
+            <Text className="text-slate-500 text-sm">Already have an account?</Text>
             <Pressable
               className="ml-2"
               onPress={() => navigation.navigate('Login')}
             >
               <Text className="text-primary-light text-sm font-bold">
-                Đăng nhập
+                Log in
               </Text>
             </Pressable>
           </View>
