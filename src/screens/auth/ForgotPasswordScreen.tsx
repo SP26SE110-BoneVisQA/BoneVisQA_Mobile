@@ -22,8 +22,8 @@ import type { AuthStackParamList } from '../../navigation/types';
 const forgotSchema = z.object({
   email: z
     .string()
-    .min(1, 'Vui lòng nhập email')
-    .email('Email không hợp lệ'),
+    .min(1, 'Please enter your email')
+    .email('Invalid email'),
 });
 
 type ForgotFormValues = z.infer<typeof forgotSchema>;
@@ -51,15 +51,15 @@ export default function ForgotPasswordScreen(): React.ReactElement {
       onSuccess: () => {
         Toast.show({
           type: 'success',
-          text1: 'Đã gửi yêu cầu',
-          text2: 'Vui lòng kiểm tra email của bạn',
+          text1: 'Request sent',
+          text2: 'Please check your email',
         });
         navigation.navigate('Login');
       },
       onError: (error) => {
         Toast.show({
           type: 'error',
-          text1: 'Gửi yêu cầu thất bại',
+          text1: 'Request failed',
           text2: error.message,
         });
       },
@@ -82,10 +82,10 @@ export default function ForgotPasswordScreen(): React.ReactElement {
 
           <View className="mb-8">
             <Text className="text-3xl font-bold text-white mb-2">
-              Đặt lại mật khẩu
+              Reset password
             </Text>
             <Text className="text-slate-400">
-              Nhập email và chúng tôi sẽ gửi liên kết để đặt lại mật khẩu cho bạn.
+              Enter your email and we will send you a reset link.
             </Text>
           </View>
 
@@ -110,7 +110,7 @@ export default function ForgotPasswordScreen(): React.ReactElement {
           />
 
           <Button
-            label="Gửi liên kết đặt lại"
+            label="Send reset link"
             variant="primary"
             size="lg"
             fullWidth

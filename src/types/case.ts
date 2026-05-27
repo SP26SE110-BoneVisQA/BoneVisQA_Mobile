@@ -115,7 +115,7 @@ export interface VisualQaAnswer {
   reviewState?: string;
 }
 
-export type VisualQaHistoryFilter = 'all' | 'cases' | 'personal';
+export type VisualQaHistoryFilter = 'all' | 'cases' | 'personal' | 'studies';
 
 export interface VisualQaHistoryItem {
   sessionId: string;

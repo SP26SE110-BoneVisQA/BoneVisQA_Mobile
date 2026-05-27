@@ -21,7 +21,7 @@ function formatDate(value?: string): string {
     return '';
   }
   try {
-    return new Date(value).toLocaleString('vi-VN');
+    return new Date(value).toLocaleString('en-US');
   } catch {
     return value;
   }
@@ -41,13 +41,13 @@ export default function CaseHistoryScreen(): React.ReactElement {
   });
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Lịch sử ca đã xem' });
+    navigation.setOptions({ title: 'Viewed case history' });
   }, [navigation]);
 
   if (isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải lịch sử..." />
+        <Loading text="Loading history..." />
       </Screen>
     );
   }
@@ -65,8 +65,8 @@ export default function CaseHistoryScreen(): React.ReactElement {
       <Screen>
         <EmptyState
           icon={<History size={48} color="#14b8a6" />}
-          title="Chưa có lịch sử"
-          subtitle="Các ca bạn đã xem hoặc tương tác sẽ hiển thị tại đây."
+          title="No history yet"
+          subtitle="Cases you viewed or interacted with will appear here."
         />
       </Screen>
     );

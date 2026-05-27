@@ -19,7 +19,7 @@ export default function ClassListScreen(): React.ReactElement {
   if (classes.isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải danh sách lớp..." />
+        <Loading text="Loading classes..." />
       </Screen>
     );
   }
@@ -36,13 +36,13 @@ export default function ClassListScreen(): React.ReactElement {
       refresh={{ refreshing: classes.isRefetching, onRefresh: () => void classes.refetch() }}
     >
       <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-        Lớp học của tôi
+        My classes
       </Text>
       {(classes.data ?? []).length === 0 ? (
         <EmptyState
           icon={<Users size={40} color="#14b8a6" />}
-          title="Chưa tham gia lớp"
-          subtitle="Lớp học của bạn sẽ hiển thị tại đây."
+          title="No classes joined yet"
+          subtitle="Your classes will appear here."
         />
       ) : (
         classes.data?.map((item) => (
@@ -55,12 +55,12 @@ export default function ClassListScreen(): React.ReactElement {
               {item.name}
             </Text>
             <Text className="text-sm text-slate-500 mt-1">
-              {item.semester ?? 'Học kỳ chưa cập nhật'} - {item.lecturerName ?? 'Giảng viên'}
+              {item.semester ?? 'Semester not updated'} - {item.lecturerName ?? 'Lecturer'}
             </Text>
             <View className="flex-row gap-4 mt-3">
               <Text className="text-xs text-slate-600">{item.totalCases} ca</Text>
               <Text className="text-xs text-slate-600">{item.totalQuizzes} quiz</Text>
-              <Text className="text-xs text-slate-600">{item.totalAnnouncements} tin mới</Text>
+              <Text className="text-xs text-slate-600">{item.totalAnnouncements} new posts</Text>
             </View>
           </Card>
         ))

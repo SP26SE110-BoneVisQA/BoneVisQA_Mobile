@@ -27,39 +27,39 @@ type Navigation = NativeStackNavigationProp<ProfileStackParamList, 'EditProfile'
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const GENDER_OPTIONS = [
-  { value: 'Male', label: 'Nam' },
-  { value: 'Female', label: 'Nữ' },
-  { value: 'Other', label: 'Khác' },
-  { value: 'PreferNotToSay', label: 'Không muốn trả lời' },
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' },
+  { value: 'Other', label: 'Other' },
+  { value: 'PreferNotToSay', label: 'Prefer not to say' },
 ] as const;
 
 const profileSchema = z.object({
   fullName: z
     .string()
-    .min(2, 'Họ tên tối thiểu 2 ký tự')
-    .max(120, 'Họ tên quá dài'),
-  schoolCohort: z.string().max(50, 'Quá dài').optional(),
+    .min(2, 'Full name must be at least 2 characters')
+    .max(120, 'Full name is too long'),
+  schoolCohort: z.string().max(50, 'Too long').optional(),
   avatarUrl: z.string().optional(),
   dateOfBirth: z
     .string()
     .optional()
     .refine(
       (v) => !v || v.length === 0 || dateRegex.test(v),
-      'Định dạng ngày sinh phải là YYYY-MM-DD',
+      'Date of birth must use YYYY-MM-DD format',
     ),
   phoneNumber: z
     .string()
     .optional()
     .refine(
       (v) => !v || v.length === 0 || /^[0-9+\-\s]{8,20}$/.test(v),
-      'Số điện thoại không hợp lệ',
+      'Invalid phone number',
     ),
   gender: z.string().optional(),
-  studentSchoolId: z.string().max(50, 'Quá dài').optional(),
-  classCode: z.string().max(50, 'Quá dài').optional(),
-  address: z.string().max(500, 'Quá dài').optional(),
-  bio: z.string().max(1000, 'Tiểu sử tối đa 1000 ký tự').optional(),
-  emergencyContact: z.string().max(200, 'Quá dài').optional(),
+  studentSchoolId: z.string().max(50, 'Too long').optional(),
+  classCode: z.string().max(50, 'Too long').optional(),
+  address: z.string().max(500, 'Too long').optional(),
+  bio: z.string().max(1000, 'Bio must be at most 1000 characters').optional(),
+  emergencyContact: z.string().max(200, 'Too long').optional(),
 });
 
 type ProfileFormInput = z.infer<typeof profileSchema>;
@@ -109,7 +109,7 @@ function GenderRadio({ value, onChange }: GenderRadioProps): React.ReactElement 
   return (
     <View>
       <Text className="text-slate-700 dark:text-slate-300 text-sm font-medium mb-1.5 ml-1">
-        Giới tính
+        Gender
       </Text>
       <View className="flex-row flex-wrap gap-2">
         {GENDER_OPTIONS.map((opt) => {
@@ -181,12 +181,12 @@ export default function EditProfileScreen(): React.ReactElement {
   const handleCancel = useCallback(() => {
     if (isDirty) {
       Alert.alert(
-        'Hủy thay đổi?',
-        'Bạn có thay đổi chưa được lưu. Bạn có chắc muốn thoát?',
+        'Discard changes?',
+        'You have unsaved changes. Are you sure you want to leave?',
         [
-          { text: 'Ở lại', style: 'cancel' },
+          { text: 'Stay', style: 'cancel' },
           {
-            text: 'Thoát',
+            text: 'Leave',
             style: 'destructive',
             onPress: () => navigation.goBack(),
           },
@@ -204,16 +204,16 @@ export default function EditProfileScreen(): React.ReactElement {
         setValue('avatarUrl', result.avatarUrl, { shouldDirty: true });
         Toast.show({
           type: 'success',
-          text1: 'Đã cập nhật ảnh đại diện',
+          text1: 'Avatar updated',
         });
       } catch (e) {
         const message =
           e && typeof e === 'object' && 'message' in e
             ? String((e as { message: unknown }).message)
-            : 'Không thể tải ảnh lên';
+            : 'Unable to upload image';
         Toast.show({
           type: 'error',
-          text1: 'Tải ảnh thất bại',
+          text1: 'Image upload failed',
           text2: message,
         });
       }
@@ -237,13 +237,13 @@ export default function EditProfileScreen(): React.ReactElement {
     };
     updateMutation.mutate(dto, {
       onSuccess: () => {
-        Toast.show({ type: 'success', text1: 'Đã lưu hồ sơ' });
+        Toast.show({ type: 'success', text1: 'Profile saved' });
         navigation.goBack();
       },
       onError: (err) => {
         Toast.show({
           type: 'error',
-          text1: 'Lưu hồ sơ thất bại',
+          text1: 'Failed to save profile',
           text2: err.message,
         });
       },
@@ -253,7 +253,7 @@ export default function EditProfileScreen(): React.ReactElement {
   if (isPending) {
     return (
       <Screen>
-        <Loading text="Đang tải hồ sơ..." />
+        <Loading text="Loading profile..." />
       </Screen>
     );
   }
@@ -272,7 +272,7 @@ export default function EditProfileScreen(): React.ReactElement {
     <Screen scroll>
       <View className="flex-1">
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-          Chỉnh sửa hồ sơ
+          Edit profile
         </Text>
 
         <AvatarPicker
@@ -284,7 +284,7 @@ export default function EditProfileScreen(): React.ReactElement {
         />
         {uploadMutation.isPending ? (
           <Text className="text-slate-500 text-xs text-center -mt-4 mb-4">
-            Đang tải ảnh lên...
+            Uploading image...
           </Text>
         ) : null}
 
@@ -294,8 +294,8 @@ export default function EditProfileScreen(): React.ReactElement {
             name="fullName"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Họ và tên"
-                placeholder="Nguyễn Văn A"
+                label="Full name"
+                placeholder="John Doe"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -309,14 +309,14 @@ export default function EditProfileScreen(): React.ReactElement {
             name="dateOfBirth"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Ngày sinh"
+                label="Date of birth"
                 placeholder="YYYY-MM-DD"
                 value={value ?? ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
                 autoCapitalize="none"
                 error={errors.dateOfBirth?.message}
-                helper="Ví dụ: 2001-05-20"
+                helper="Example: 2001-05-20"
               />
             )}
           />
@@ -334,7 +334,7 @@ export default function EditProfileScreen(): React.ReactElement {
             name="phoneNumber"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Số điện thoại"
+                label="Phone number"
                 placeholder="0901234567"
                 value={value ?? ''}
                 onChangeText={onChange}
@@ -350,7 +350,7 @@ export default function EditProfileScreen(): React.ReactElement {
             name="studentSchoolId"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Mã sinh viên"
+                label="Student ID"
                 placeholder="SV2024001"
                 value={value ?? ''}
                 onChangeText={onChange}
@@ -366,7 +366,7 @@ export default function EditProfileScreen(): React.ReactElement {
             name="schoolCohort"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Khóa"
+                label="Harda"
                 placeholder="K45"
                 value={value ?? ''}
                 onChangeText={onChange}
@@ -381,7 +381,7 @@ export default function EditProfileScreen(): React.ReactElement {
             name="classCode"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Lớp"
+                label="Class"
                 placeholder="Y6A"
                 value={value ?? ''}
                 onChangeText={onChange}
@@ -396,8 +396,8 @@ export default function EditProfileScreen(): React.ReactElement {
             name="address"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Địa chỉ"
-                placeholder="Số nhà, đường, quận, thành phố"
+                label="Address"
+                placeholder="House number, street, district, city"
                 value={value ?? ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -411,8 +411,8 @@ export default function EditProfileScreen(): React.ReactElement {
             name="emergencyContact"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Liên hệ khẩn cấp"
-                placeholder="Tên và số điện thoại"
+                label="Emergency contact"
+                placeholder="Name and phone number"
                 value={value ?? ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -426,8 +426,8 @@ export default function EditProfileScreen(): React.ReactElement {
             name="bio"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Tiểu sử"
-                placeholder="Giới thiệu ngắn về bạn"
+                label="Bio"
+                placeholder="A short note about you"
                 value={value ?? ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -442,7 +442,7 @@ export default function EditProfileScreen(): React.ReactElement {
         <View className="flex-row gap-3 mt-6 mb-8">
           <View className="flex-1">
             <Button
-              label="Hủy"
+              label="Cancel"
               variant="secondary"
               size="lg"
               fullWidth
@@ -451,7 +451,7 @@ export default function EditProfileScreen(): React.ReactElement {
           </View>
           <View className="flex-1">
             <Button
-              label="Lưu"
+              label="Save"
               variant="primary"
               size="lg"
               fullWidth

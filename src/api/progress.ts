@@ -63,7 +63,7 @@ function mapProgress(dto: RawStudentProgressDto): ProgressSummary {
 function mapTopicStat(dto: RawStudentTopicStatDto): TopicStat {
   const attempts = dto.quizAttempts ?? 0;
   return {
-    topic: dto.topic ?? 'Khác',
+    topic: dto.topic ?? 'Other',
     total: attempts,
     completed: attempts,
     averageScore: dto.averageQuizScore ?? 0,
@@ -89,7 +89,7 @@ function mapRecentActivity(
   return {
     id: `${dto.occurredAt ?? 'activity'}-${index}`,
     type: normalizeActivityType(dto.activityType),
-    title: dto.title ?? 'Hoạt động',
+    title: dto.title ?? 'Activity',
     description: dto.description ?? undefined,
     topic: dto.topic ?? undefined,
     timestamp: dto.occurredAt ?? new Date().toISOString(),

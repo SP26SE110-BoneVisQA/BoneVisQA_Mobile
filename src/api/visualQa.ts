@@ -93,6 +93,8 @@ export interface AskJsonInput {
   caseId?: string;
   question: string;
   imageUrl?: string;
+  imageId?: string;
+  coordinates?: string;
   language?: string;
   sessionId?: string;
 }
@@ -231,6 +233,8 @@ export async function askJson(dto: AskJsonInput): Promise<VisualQaAnswer> {
         questionText: dto.question,
         caseId: dto.caseId,
         imageUrl: dto.imageUrl,
+        imageId: dto.imageId,
+        coordinates: dto.coordinates,
         language: dto.language ?? 'vi',
         sessionId: dto.sessionId,
       },
@@ -275,11 +279,39 @@ export async function askMultipart(params: AskMultipartInput): Promise<VisualQaA
   }
 }
 
+export async function askStreamMultipart(
+  params: AskMultipartInput,
+): Promise<string> {
+  try {
+    const form = new FormData();
+    form.append('QuestionText', params.question);
+    form.append('language', params.language ?? 'vi');
+    if (params.sessionId) {
+      form.append('sessionId', params.sessionId);
+    }
+    form.append('CustomImage', buildFilePart(params.imageUri) as unknown as Blob);
+    const { data } = await api.post<string>(
+      '/api/student/visual-qa/ask-stream',
+      form,
+      {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        responseType: 'text',
+      },
+    );
+    return data;
+  } catch (error) {
+    throw await handleApiError(error);
+  }
+}
+
 export async function getVisualQaHistory(
   filter: VisualQaHistoryFilter,
 ): Promise<VisualQaHistoryResult> {
-  const suffix = filter === 'all' ? '' : `/${filter}`;
-  const { data } = await api.get<HistoryDto>(`/api/student/visual-qa/history${suffix}`, {
+  const path =
+    filter === 'studies'
+      ? '/api/student/studies/personal'
+      : `/api/student/visual-qa/history${filter === 'all' ? '' : `/${filter}`}`;
+  const { data } = await api.get<HistoryDto>(path, {
     params: { limit: 40, offset: 0 },
   });
   const items: VisualQaHistoryItem[] = Array.isArray(data?.items)

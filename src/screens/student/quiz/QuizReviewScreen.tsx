@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+﻿import React, { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -38,7 +38,7 @@ function QuestionReviewCard({
     <Card className="mb-3">
       <View className="flex-row items-center justify-between mb-2">
         <Text className="text-xs uppercase tracking-wider text-slate-500">
-          Câu {index + 1}
+          Question {index + 1}
         </Text>
         <View
           className={[
@@ -57,7 +57,7 @@ function QuestionReviewCard({
               question.isCorrect ? 'text-emerald-700' : 'text-rose-700',
             ].join(' ')}
           >
-            {question.isCorrect ? 'Đúng' : 'Sai'}
+            {question.isCorrect ? 'Correct' : 'Incorrect'}
           </Text>
         </View>
       </View>
@@ -83,11 +83,11 @@ function QuestionReviewCard({
               </Text>
               {isCorrect ? (
                 <Text className="text-[11px] text-emerald-600 mt-1">
-                  Đáp án đúng
+                  Correct answer
                 </Text>
               ) : isSelected ? (
                 <Text className="text-[11px] text-rose-600 mt-1">
-                  Bạn đã chọn
+                  You selected
                 </Text>
               ) : null}
             </View>
@@ -96,7 +96,7 @@ function QuestionReviewCard({
       </View>
       {question.explanation ? (
         <View className="mt-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
-          <Text className="text-xs font-semibold text-primary mb-1">Giải thích</Text>
+          <Text className="text-xs font-semibold text-primary mb-1">Explanation</Text>
           <Text className="text-sm text-slate-700 dark:text-slate-200">
             {question.explanation}
           </Text>
@@ -124,7 +124,7 @@ export default function QuizReviewScreen(): React.ReactElement {
     if (!data?.quizId) {
       Toast.show({
         type: 'error',
-        text1: 'Không tìm thấy bài quiz gốc',
+        text1: 'Original quiz not found',
       });
       return;
     }
@@ -132,12 +132,12 @@ export default function QuizReviewScreen(): React.ReactElement {
       await retake.mutateAsync(data.quizId);
       Toast.show({
         type: 'success',
-        text1: 'Đã gửi yêu cầu làm lại',
+        text1: 'Retake request sent',
       });
     } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Gửi yêu cầu thất bại',
+        text1: 'Failed to send retake request',
         text2: (err as { message?: string }).message,
       });
     }
@@ -146,7 +146,7 @@ export default function QuizReviewScreen(): React.ReactElement {
   if (isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải kết quả…" />
+        <Loading text="Loading results..." />
       </Screen>
     );
   }
@@ -162,7 +162,7 @@ export default function QuizReviewScreen(): React.ReactElement {
   if (!data) {
     return (
       <Screen>
-        <Loading text="Không có dữ liệu" />
+        <Loading text="No data available" />
       </Screen>
     );
   }
@@ -174,15 +174,15 @@ export default function QuizReviewScreen(): React.ReactElement {
     <Screen scroll>
       <Card className="mb-4">
         <Text className="text-xs uppercase tracking-widest text-primary font-semibold">
-          Kết quả
+          Results
         </Text>
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-          {data.quizTitle ?? 'Bài quiz'}
+          {data.quizTitle ?? 'Quiz'}
         </Text>
         <View className="flex-row items-center mt-3 gap-3">
           <ScoreBadge score={data.score ?? null} />
           <Text className="text-sm text-slate-500">
-            {correct} / {total} câu đúng
+            {correct} / {total} correct answers
           </Text>
         </View>
         {typeof data.passed === 'boolean' ? (
@@ -192,7 +192,7 @@ export default function QuizReviewScreen(): React.ReactElement {
               data.passed ? 'text-emerald-600' : 'text-rose-600',
             ].join(' ')}
           >
-            {data.passed ? 'Đã đạt yêu cầu' : 'Chưa đạt yêu cầu'}
+            {data.passed ? 'Passed' : 'Not passed'}
           </Text>
         ) : null}
       </Card>
@@ -204,7 +204,7 @@ export default function QuizReviewScreen(): React.ReactElement {
       <View className="flex-row gap-3 mt-2 mb-6">
         <View className="flex-1">
           <Button
-            label="Làm lại"
+            label="Retake"
             variant="outline"
             onPress={() => void handleRetake()}
             loading={retake.isPending}
@@ -214,7 +214,7 @@ export default function QuizReviewScreen(): React.ReactElement {
         </View>
         <View className="flex-1">
           <Button
-            label="Về danh sách"
+            label="Back to list"
             onPress={() => navigation.navigate('QuizList')}
             fullWidth
           />

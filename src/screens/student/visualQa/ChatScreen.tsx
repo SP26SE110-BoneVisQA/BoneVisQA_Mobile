@@ -25,6 +25,9 @@ export default function ChatScreen(): React.ReactElement {
   const route = useRoute<ChatRoute>();
   const caseId = route.params?.caseId;
   const sessionId = route.params?.sessionId;
+  const imageId = route.params?.imageId;
+  const imageUrl = route.params?.imageUrl;
+  const coordinates = route.params?.coordinates;
 
   const { data: caseItem } = useQuery<Case, ApiError>({
     queryKey: ['case', caseId ?? 'none'],
@@ -39,14 +42,19 @@ export default function ChatScreen(): React.ReactElement {
   });
 
   const { messages, ask, isLoading, capabilities, seed } = useVisualQa(
-    caseId,
+    {
+      caseId,
+      imageId,
+      imageUrl: imageUrl ?? caseItem?.images[0]?.url,
+      coordinates,
+    },
     sessionId,
     thread.data?.capabilities,
   );
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: caseItem?.title ?? 'Hỏi AI X-quang',
+      title: caseItem?.title ?? 'Ask X-ray AI',
       headerRight: () => (
         <Pressable onPress={() => navigation.navigate('VisualQaHistory')} className="px-2">
           <History size={21} color="#0f766e" />
@@ -82,11 +90,9 @@ export default function ChatScreen(): React.ReactElement {
     if (sessionId) {
       return;
     }
-    const greeting = sessionId
-      ? ''
-      : caseItem
-      ? `Xin chào! Tôi có thể giúp bạn phân tích ca **${caseItem.title}**. Hãy đặt câu hỏi về hình ảnh hoặc các dấu hiệu bạn thấy.`
-      : 'Xin chào! Tôi có thể giúp bạn phân tích X-quang. Hãy đặt câu hỏi hoặc đính kèm một hình ảnh.';
+    const greeting = caseItem
+      ? `Hi! I will use the image from case **${caseItem.title}** to answer. ${coordinates ? 'You marked the region to ask about.' : 'You can ask directly without uploading the image again.'}`
+      : 'Hi! For images outside a case, please upload an X-ray before asking AI.';
     seed([
       {
         id: `greet-${sessionId ?? caseId ?? 'general'}`,
@@ -95,7 +101,7 @@ export default function ChatScreen(): React.ReactElement {
         createdAt: new Date().toISOString(),
       },
     ]);
-  }, [caseId, caseItem, seed, sessionId, thread.data]);
+  }, [caseId, caseItem, coordinates, seed, sessionId, thread.data]);
 
   const handleSend = (text: string, imageUri?: string): void => {
     void ask(text, imageUri);
@@ -104,7 +110,7 @@ export default function ChatScreen(): React.ReactElement {
   if (sessionId && thread.isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải hội thoại..." />
+        <Loading text="Loading conversation..." />
       </Screen>
     );
   }
@@ -131,11 +137,15 @@ export default function ChatScreen(): React.ReactElement {
           <ChatList messages={messages} />
         </View>
         {canAskNext ? (
-          <ChatInput onSend={handleSend} loading={isLoading} />
+          <ChatInput
+            onSend={handleSend}
+            loading={isLoading}
+            requireImage={!caseId && !sessionId}
+          />
         ) : (
           <Card className="mx-3 mb-3">
             <Text className="text-sm text-slate-600 dark:text-slate-300">
-              Hội thoại này đã đóng hoặc đã đạt giới hạn câu hỏi.
+              This conversation is closed or has reached the question limit.
             </Text>
           </Card>
         )}

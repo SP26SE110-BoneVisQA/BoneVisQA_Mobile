@@ -30,7 +30,7 @@ function flatten(response: GlobalSearchResponseDto): SearchResult[] {
     out.push({
       id: c.id,
       type: 'case',
-      title: c.title ?? 'Ca lâm sàng',
+      title: c.title ?? 'Clinical cases',
     });
   }
   for (const q of response.quizzes ?? []) {

@@ -18,7 +18,7 @@ export default function RootNavigator(): React.ReactElement {
   }, [hydrate]);
 
   if (!isHydrated) {
-    return <Loading text="Đang khởi tạo..." />;
+    return <Loading text="Initializing..." />;
   }
 
   return (

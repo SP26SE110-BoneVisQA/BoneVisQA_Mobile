@@ -18,7 +18,7 @@ export function QuizProgressBar({
     <View className="w-full">
       <View className="flex-row justify-between mb-1">
         <Text className="text-xs text-slate-500 dark:text-slate-400">
-          {label ?? 'Tiến độ'}
+          {label ?? 'Progress'}
         </Text>
         <Text className="text-xs font-semibold text-slate-700 dark:text-slate-300">
           {current} / {total}

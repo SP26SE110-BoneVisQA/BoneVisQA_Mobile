@@ -23,7 +23,7 @@ export function ScoreBadge({
   if (typeof score !== 'number') {
     return (
       <View className="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700">
-        <Text className="text-xs text-slate-500 dark:text-slate-300">Chưa có điểm</Text>
+        <Text className="text-xs text-slate-500 dark:text-slate-300">No score yet</Text>
       </View>
     );
   }
@@ -33,7 +33,7 @@ export function ScoreBadge({
   return (
     <View className={['rounded-full', padding, palette.bg].join(' ')}>
       <Text className={['font-semibold', textSize, palette.text].join(' ')}>
-        {score.toFixed(1)} điểm
+        {score.toFixed(1)} points
       </Text>
     </View>
   );

@@ -65,12 +65,12 @@ function HomeStackNavigator(): React.ReactElement {
       <HomeStack.Screen
         name="Search"
         component={SearchScreen}
-        options={{ headerShown: true, title: 'Tìm kiếm' }}
+        options={{ headerShown: true, title: 'Search' }}
       />
       <HomeStack.Screen
         name="Announcements"
         component={AnnouncementsScreen}
-        options={{ headerShown: true, title: 'Thông báo chung' }}
+        options={{ headerShown: true, title: 'General announcements' }}
       />
     </HomeStack.Navigator>
   );
@@ -84,32 +84,32 @@ function QuizStackNavigator(): React.ReactElement {
       <QuizStack.Screen
         name="QuizPlay"
         component={QuizPlayScreen}
-        options={{ headerShown: true, title: 'Làm bài' }}
+        options={{ headerShown: true, title: 'Take quiz' }}
       />
       <QuizStack.Screen
         name="QuizReview"
         component={QuizReviewScreen}
-        options={{ headerShown: true, title: 'Xem lại' }}
+        options={{ headerShown: true, title: 'Review' }}
       />
       <QuizStack.Screen
         name="QuizHistory"
         component={QuizHistoryScreen}
-        options={{ headerShown: true, title: 'Lịch sử' }}
+        options={{ headerShown: true, title: 'History' }}
       />
       <QuizStack.Screen
         name="PracticeMode"
         component={PracticeModeScreen}
-        options={{ headerShown: true, title: 'Luyện tập' }}
+        options={{ headerShown: true, title: 'Practice' }}
       />
       <QuizStack.Screen
         name="Progress"
         component={ProgressScreen}
-        options={{ headerShown: true, title: 'Tiến độ' }}
+        options={{ headerShown: true, title: 'Progress' }}
       />
       <QuizStack.Screen
         name="Analytics"
         component={AnalyticsScreen}
-        options={{ headerShown: true, title: 'Phân tích' }}
+        options={{ headerShown: true, title: 'Analytics' }}
       />
     </QuizStack.Navigator>
   );
@@ -140,17 +140,17 @@ function CasesStackNavigator(): React.ReactElement {
       <CasesStack.Screen
         name="CaseList"
         component={CaseListScreen}
-        options={{ headerShown: true, title: 'Ca lâm sàng' }}
+        options={{ headerShown: true, title: 'Clinical cases' }}
       />
       <CasesStack.Screen
         name="CaseDetail"
         component={CaseDetailScreen}
-        options={{ headerShown: true, title: 'Chi tiết ca' }}
+        options={{ headerShown: true, title: 'Case detail' }}
       />
       <CasesStack.Screen
         name="CaseHistory"
         component={CaseHistoryScreen}
-        options={{ headerShown: true, title: 'Lịch sử ca' }}
+        options={{ headerShown: true, title: 'History ca' }}
       />
     </CasesStack.Navigator>
   );
@@ -163,22 +163,22 @@ function VisualQaStackNavigator(): React.ReactElement {
       <VisualQaStack.Screen
         name="VisualQaChat"
         component={ChatScreen}
-        options={{ headerShown: true, title: 'Hỏi AI X-quang' }}
+        options={{ headerShown: true, title: 'Ask X-ray AI' }}
       />
       <VisualQaStack.Screen
         name="VisualQaAsk"
         component={AskScreen}
-        options={{ headerShown: true, title: 'Hỏi AI nhanh' }}
+        options={{ headerShown: true, title: 'Quick AI question' }}
       />
       <VisualQaStack.Screen
         name="VisualQaHistory"
         component={VisualQaHistoryScreen}
-        options={{ headerShown: true, title: 'Lịch sử Visual QA' }}
+        options={{ headerShown: true, title: 'History Visual QA' }}
       />
       <VisualQaStack.Screen
         name="VisualQaThread"
         component={VisualQaThreadScreen}
-        options={{ headerShown: true, title: 'Chi tiết hội thoại' }}
+        options={{ headerShown: true, title: 'Conversation detail' }}
       />
     </VisualQaStack.Navigator>
   );
@@ -205,32 +205,32 @@ function ProfileStackNavigator(): React.ReactElement {
       <ProfileStack.Screen
         name="EditProfile"
         component={EditProfileScreen}
-        options={{ headerShown: true, title: 'Chỉnh sửa hồ sơ' }}
+        options={{ headerShown: true, title: 'Edit profile' }}
       />
       <ProfileStack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ headerShown: true, title: 'Cài đặt' }}
+        options={{ headerShown: true, title: 'Settings' }}
       />
       <ProfileStack.Screen
         name="ChangePassword"
         component={ChangePasswordScreen}
-        options={{ headerShown: true, title: 'Đổi mật khẩu' }}
+        options={{ headerShown: true, title: 'Change password' }}
       />
       <ProfileStack.Screen
         name="MedicalVerification"
         component={MedicalVerificationScreen}
-        options={{ headerShown: true, title: 'Xác minh y tế' }}
+        options={{ headerShown: true, title: 'Medical verification' }}
       />
       <ProfileStack.Screen
         name="Classes"
         component={ClassListScreen}
-        options={{ headerShown: true, title: 'Lớp học' }}
+        options={{ headerShown: true, title: 'Classes' }}
       />
       <ProfileStack.Screen
         name="ClassDetail"
         component={ClassDetailScreen}
-        options={{ headerShown: true, title: 'Chi tiết lớp' }}
+        options={{ headerShown: true, title: 'Class detail' }}
       />
     </ProfileStack.Navigator>
   );
@@ -254,7 +254,7 @@ export default function AppNavigator(): React.ReactElement {
         name="HomeTab"
         component={HomeStackNavigator}
         options={{
-          title: 'Trang chủ',
+          title: 'Home',
           tabBarIcon: ({ color, size }) => <Home color={color} size={size} />,
         }}
       />
@@ -272,7 +272,7 @@ export default function AppNavigator(): React.ReactElement {
         name="AssignmentsTab"
         component={AssignmentsStackNavigator}
         options={{
-          title: 'Bài tập',
+          title: 'Assignments',
           tabBarIcon: ({ color, size }) => (
             <ClipboardList color={color} size={size} />
           ),
@@ -282,7 +282,7 @@ export default function AppNavigator(): React.ReactElement {
         name="CasesTab"
         component={CasesStackNavigator}
         options={{
-          title: 'Ca lâm sàng',
+          title: 'Clinical cases',
           tabBarIcon: ({ color, size }) => (
             <FileText color={color} size={size} />
           ),
@@ -302,7 +302,7 @@ export default function AppNavigator(): React.ReactElement {
         name="NotificationsTab"
         component={NotificationsStackNavigator}
         options={{
-          title: 'Thông báo',
+          title: 'Notifications',
           tabBarIcon: ({ color, size }) => <Bell color={color} size={size} />,
         }}
       />
@@ -310,7 +310,7 @@ export default function AppNavigator(): React.ReactElement {
         name="ProfileTab"
         component={ProfileStackNavigator}
         options={{
-          title: 'Hồ sơ',
+          title: 'Profile',
           tabBarIcon: ({ color, size }) => <User color={color} size={size} />,
         }}
       />

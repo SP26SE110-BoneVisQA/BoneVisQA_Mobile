@@ -31,7 +31,7 @@ export default function NotificationsScreen(): React.ReactElement {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900" edges={['top']}>
-        <Loading text="Đang tải thông báo..." />
+        <Loading text="Loading notifications..." />
       </SafeAreaView>
     );
   }
@@ -40,7 +40,7 @@ export default function NotificationsScreen(): React.ReactElement {
     return (
       <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900" edges={['top']}>
         <ErrorView
-          error={error ?? 'Không thể tải thông báo'}
+          error={error ?? 'Could not load notifications'}
           onRetry={() => {
             void refetch();
           }}
@@ -76,8 +76,8 @@ export default function NotificationsScreen(): React.ReactElement {
           <View className="flex-1 min-h-[400px]">
             <EmptyState
               icon={<BellOff size={48} color="#94a3b8" />}
-              title="Không có thông báo"
-              subtitle="Bạn đã đọc hết tất cả thông báo"
+              title="No notifications"
+              subtitle="You are all caught up"
             />
           </View>
         }

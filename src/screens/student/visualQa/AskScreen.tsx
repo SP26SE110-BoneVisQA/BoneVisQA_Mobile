@@ -35,7 +35,7 @@ export default function AskScreen(): React.ReactElement {
   const [errorText, setErrorText] = React.useState<string | null>(null);
 
   React.useLayoutEffect(() => {
-    navigation.setOptions({ title: 'Hỏi AI nhanh' });
+    navigation.setOptions({ title: 'Quick AI question' });
   }, [navigation]);
 
   const pickImage = async (): Promise<void> => {
@@ -69,7 +69,7 @@ export default function AskScreen(): React.ReactElement {
       const message =
         error && typeof error === 'object' && 'message' in error
           ? String((error as { message: unknown }).message)
-          : 'Đã xảy ra lỗi khi gọi AI.';
+          : 'Something went wrong while calling AI.';
       setErrorText(message);
     } finally {
       setLoading(false);
@@ -96,25 +96,24 @@ export default function AskScreen(): React.ReactElement {
           keyboardShouldPersistTaps="handled"
         >
           <Text className="text-slate-900 dark:text-white text-xl font-bold mb-2">
-            Đặt câu hỏi với AI
+            Ask AI a question
           </Text>
           <Text className="text-slate-500 dark:text-slate-400 text-sm mb-5">
-            Mô tả vấn đề, chẩn đoán hoặc vùng bất thường. Có thể đính kèm một
-            hình X-quang.
+            Describe the issue, diagnosis, or abnormal region. You can attach an X-ray image.
           </Text>
 
           <Input
-            label="Câu hỏi"
+            label="Question"
             value={question}
             onChangeText={setQuestion}
-            placeholder="Ví dụ: Hình ảnh này có dấu hiệu gãy xương không?"
+            placeholder="Example: Does this image show signs of a fracture?"
             multiline
             numberOfLines={4}
           />
 
           <View className="mt-4">
             <Text className="text-slate-700 dark:text-slate-300 text-sm font-medium mb-1.5 ml-1">
-              Hình ảnh (tuỳ chọn)
+              Image (optional)
             </Text>
             {imageUri ? (
               <View className="relative">
@@ -137,7 +136,7 @@ export default function AskScreen(): React.ReactElement {
               >
                 <ImagePlus size={24} color="#64748b" />
                 <Text className="text-slate-500 mt-2 text-sm">
-                  Chạm để chọn ảnh
+                  Tap to choose an image
                 </Text>
               </Pressable>
             )}
@@ -145,7 +144,7 @@ export default function AskScreen(): React.ReactElement {
 
           <View className="mt-5">
             <Button
-              label="Hỏi AI"
+              label="Ask AI"
               onPress={handleAsk}
               loading={loading}
               disabled={!canSubmit}
@@ -162,7 +161,7 @@ export default function AskScreen(): React.ReactElement {
           {answer ? (
             <View className="mt-6 p-4 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-2xl">
               <Text className="text-slate-500 dark:text-slate-400 text-xs uppercase font-semibold mb-2">
-                Phản hồi từ AI
+                AI response
               </Text>
               <Markdown
                 style={{
@@ -175,7 +174,7 @@ export default function AskScreen(): React.ReactElement {
               {answer.references && answer.references.length > 0 ? (
                 <View className="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
                   <Text className="text-[11px] text-slate-500 font-semibold mb-1">
-                    Tham khảo
+                    References
                   </Text>
                   {answer.references.map((ref, idx) => (
                     <Text
@@ -189,7 +188,7 @@ export default function AskScreen(): React.ReactElement {
               ) : null}
               <View className="mt-4">
                 <Button
-                  label="Hỏi tiếp trong chat"
+                  label="Continue in chat"
                   variant="outline"
                   onPress={continueInChat}
                   fullWidth

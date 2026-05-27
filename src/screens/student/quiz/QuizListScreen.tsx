@@ -23,8 +23,8 @@ interface TabDef {
 }
 
 const TABS: ReadonlyArray<TabDef> = [
-  { key: 'assigned', label: 'Được giao' },
-  { key: 'practice', label: 'Luyện tập' },
+  { key: 'assigned', label: 'Assigned' },
+  { key: 'practice', label: 'Practice' },
 ];
 
 function HeaderActions({
@@ -42,7 +42,7 @@ function HeaderActions({
       >
         <History size={16} color="#334155" />
         <Text className="ml-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200">
-          Lịch sử
+          History
         </Text>
       </Pressable>
       <Pressable
@@ -50,7 +50,7 @@ function HeaderActions({
         className="flex-row items-center px-3 py-2 rounded-xl bg-primary/10"
       >
         <BarChart3 size={16} color="#14b8a6" />
-        <Text className="ml-1.5 text-xs font-semibold text-primary">Tiến độ</Text>
+        <Text className="ml-1.5 text-xs font-semibold text-primary">Progress</Text>
       </Pressable>
     </View>
   );
@@ -83,7 +83,7 @@ export default function QuizListScreen(): React.ReactElement {
 
   const renderEmpty = (): React.ReactElement => {
     if (active.isLoading) {
-      return <Loading text="Đang tải danh sách quiz…" />;
+      return <Loading text="Loading quizzes..." />;
     }
     if (active.isError && active.error) {
       return (
@@ -101,15 +101,15 @@ export default function QuizListScreen(): React.ReactElement {
         }
         title={
           activeTab === 'assigned'
-            ? 'Chưa có quiz được giao'
-            : 'Chưa có quiz luyện tập'
+            ? 'No assigned quizzes yet'
+            : 'No practice quizzes yet'
         }
         subtitle={
           activeTab === 'assigned'
-            ? 'Các bài quiz từ giảng viên sẽ xuất hiện ở đây.'
-            : 'Tạo quiz luyện tập để bắt đầu.'
+            ? 'Quizzes from lecturers will appear here.'
+            : 'Create a practice quiz to get started.'
         }
-        actionLabel={activeTab === 'practice' ? 'Tạo bài luyện tập' : undefined}
+        actionLabel={activeTab === 'practice' ? 'Create practice quiz' : undefined}
         onAction={
           activeTab === 'practice'
             ? (): void => navigation.navigate('PracticeMode')
@@ -128,7 +128,7 @@ export default function QuizListScreen(): React.ReactElement {
               Quiz
             </Text>
             <Text className="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
-              Bài tập của bạn
+              Your assignments
             </Text>
           </View>
           <HeaderActions

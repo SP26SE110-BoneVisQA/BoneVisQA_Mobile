@@ -425,7 +425,7 @@ export async function getPracticeList(): Promise<Quiz[]> {
       .filter((s) => s && typeof s === 'object')
       .map<Quiz>((s) => ({
         id: s.quizId ?? '',
-        title: s.title ?? 'Bài luyện tập',
+        title: s.title ?? 'Practice quiz',
         topic: s.topic ?? undefined,
         questionCount: Array.isArray(s.questions) ? s.questions.length : 0,
         durationMinutes: s.timeLimit ?? undefined,

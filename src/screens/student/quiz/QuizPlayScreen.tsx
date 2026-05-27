@@ -51,12 +51,12 @@ export default function QuizPlayScreen(): React.ReactElement {
       }
       e.preventDefault();
       Alert.alert(
-        'Rời khỏi bài làm?',
-        'Bài làm đang được lưu tự động. Bạn có chắc muốn rời đi?',
+        'Leave this attempt?',
+        'Your attempt is being autosaved. Are you sure you want to leave?',
         [
-          { text: 'Ở lại', style: 'cancel', onPress: () => undefined },
+          { text: 'Stay', style: 'cancel', onPress: () => undefined },
           {
-            text: 'Rời đi',
+            text: 'Leave',
             style: 'destructive',
             onPress: () => navigation.dispatch(e.data.action),
           },
@@ -97,19 +97,19 @@ export default function QuizPlayScreen(): React.ReactElement {
       const result = await submit();
       Toast.show({
         type: 'success',
-        text1: 'Đã nộp bài',
+        text1: 'Submitted',
         text2:
           typeof result.score === 'number'
-            ? `Điểm của bạn: ${result.score.toFixed(1)}`
-            : 'Đã ghi nhận bài làm',
+            ? `Your score: ${result.score.toFixed(1)}`
+            : 'Attempt recorded',
       });
       navigation.replace('QuizReview', { attemptId: result.id });
     } catch (err) {
       Toast.show({
         type: 'error',
-        text1: 'Nộp bài thất bại',
+        text1: 'Submission failed',
         text2:
-          (err as { message?: string }).message ?? 'Vui lòng thử lại sau.',
+          (err as { message?: string }).message ?? 'Please try again later.',
       });
     } finally {
       setConfirmVisible(false);
@@ -119,16 +119,16 @@ export default function QuizPlayScreen(): React.ReactElement {
   const confirmSubmit = useCallback((): void => {
     setConfirmVisible(true);
     Alert.alert(
-      'Nộp bài?',
-      'Bạn có muốn nộp bài làm này ngay bây giờ không?',
+      'Submit?',
+      'Do you want to submit this attempt now?',
       [
         {
-          text: 'Huỷ',
+          text: 'Cancel',
           style: 'cancel',
           onPress: () => setConfirmVisible(false),
         },
         {
-          text: 'Nộp bài',
+          text: 'Submit',
           style: 'default',
           onPress: () => void handleSubmit(),
         },
@@ -139,7 +139,7 @@ export default function QuizPlayScreen(): React.ReactElement {
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
-        <Loading text="Đang chuẩn bị bài làm…" />
+        <Loading text="Preparing attempt..." />
       </SafeAreaView>
     );
   }
@@ -160,7 +160,7 @@ export default function QuizPlayScreen(): React.ReactElement {
   if (!currentQuestion) {
     return (
       <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
-        <Loading text="Không có câu hỏi" />
+        <Loading text="No questions available" />
       </SafeAreaView>
     );
   }
@@ -172,7 +172,7 @@ export default function QuizPlayScreen(): React.ReactElement {
           <QuizProgressBar
             current={currentIndex + 1}
             total={questions.length}
-            label="Câu hỏi"
+            label="Question"
           />
         </View>
         {durationMinutes && attempt ? (
@@ -205,7 +205,7 @@ export default function QuizPlayScreen(): React.ReactElement {
       <View className="px-5 pt-3 pb-4 flex-row gap-3 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
         <View className="flex-1">
           <Button
-            label="Trước"
+            label="Previous"
             variant="outline"
             onPress={prev}
             disabled={isFirst || isSubmitting}
@@ -215,14 +215,14 @@ export default function QuizPlayScreen(): React.ReactElement {
         <View className="flex-1">
           {isLast ? (
             <Button
-              label="Nộp bài"
+              label="Submit"
               onPress={confirmSubmit}
               loading={isSubmitting}
               fullWidth
             />
           ) : (
             <Button
-              label="Tiếp"
+              label="Next"
               onPress={next}
               disabled={isSubmitting}
               fullWidth

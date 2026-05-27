@@ -45,7 +45,13 @@ export type CasesStackParamList = {
 
 export type VisualQaStackParamList = {
   VisualQaAsk: { caseId?: string };
-  VisualQaChat: { caseId?: string; sessionId?: string };
+  VisualQaChat: {
+    caseId?: string;
+    sessionId?: string;
+    imageId?: string;
+    imageUrl?: string;
+    coordinates?: string;
+  };
   VisualQaHistory: undefined;
   VisualQaThread: { sessionId: string };
 };

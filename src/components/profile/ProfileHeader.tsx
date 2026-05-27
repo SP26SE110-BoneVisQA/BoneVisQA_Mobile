@@ -55,7 +55,7 @@ export function ProfileHeader({
         className="text-slate-900 dark:text-white text-2xl font-bold text-center"
         numberOfLines={1}
       >
-        {fullName ?? 'Học viên'}
+        {fullName ?? 'Student'}
       </Text>
       {email ? (
         <Text
@@ -69,7 +69,7 @@ export function ProfileHeader({
         {role ? (
           <View className="bg-primary/15 px-3 py-1 rounded-full border border-primary/30">
             <Text className="text-primary-dark text-xs font-semibold">
-              {role === 'Student' ? 'Học viên' : role}
+              {role === 'Student' ? 'Student' : role}
             </Text>
           </View>
         ) : null}

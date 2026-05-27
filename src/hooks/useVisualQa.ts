@@ -3,6 +3,13 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { askJson, askMultipart } from '../api/visualQa';
 import type { VisualQaCapabilities, VisualQaMessage } from '../types/case';
 
+export interface VisualQaCaseContext {
+  caseId?: string;
+  imageId?: string;
+  imageUrl?: string;
+  coordinates?: string;
+}
+
 function makeId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -21,11 +28,14 @@ export interface UseVisualQaResult {
 }
 
 export function useVisualQa(
-  caseId?: string,
+  context?: string | VisualQaCaseContext,
   sessionId?: string,
   initialCapabilities?: VisualQaCapabilities,
 ): UseVisualQaResult {
   const queryClient = useQueryClient();
+  const caseContext =
+    typeof context === 'string' ? { caseId: context } : context ?? {};
+  const { caseId, imageId, imageUrl, coordinates } = caseContext;
   const key = ['visualqa', sessionId ?? caseId ?? 'general'] as const;
   const sessionIdRef = useRef<string | undefined>(sessionId);
   const [capabilities, setCapabilities] = useState<VisualQaCapabilities | undefined>(
@@ -90,6 +100,9 @@ export function useVisualQa(
             })
           : await askJson({
               caseId,
+              imageId,
+              imageUrl,
+              coordinates,
               question,
               sessionId: sessionIdRef.current,
             });
@@ -116,7 +129,7 @@ export function useVisualQa(
         const message =
           error && typeof error === 'object' && 'message' in error
             ? String((error as { message: unknown }).message)
-            : 'Đã xảy ra lỗi khi gọi AI.';
+            : 'Something went wrong while calling AI.';
         setMessages((prev) =>
           prev.map((m) =>
             m.id === loadingId
@@ -132,7 +145,7 @@ export function useVisualQa(
         );
       }
     },
-    [caseId, setMessages],
+    [caseId, coordinates, imageId, imageUrl, setMessages],
   );
 
   const clear = useCallback((): void => {

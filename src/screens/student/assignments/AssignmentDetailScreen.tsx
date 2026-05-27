@@ -29,10 +29,10 @@ type RouteType = RouteProp<AssignmentsStackParamList, 'AssignmentDetail'>;
 const DRAFT_SAVE_MS = 450;
 
 const STATUS_LABELS: Record<AssignmentStatus, string> = {
-  pending: 'Chưa nộp',
-  overdue: 'Quá hạn',
-  submitted: 'Đã nộp',
-  graded: 'Đã chấm',
+  pending: 'Not submitted',
+  overdue: 'Overdue',
+  submitted: 'Submitted',
+  graded: 'Graded',
 };
 
 function draftKey(assignmentId: string): string {
@@ -41,13 +41,13 @@ function draftKey(assignmentId: string): string {
 
 function formatDateTime(iso: string | undefined): string {
   if (!iso) {
-    return 'Không có hạn';
+    return 'No due date';
   }
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) {
-    return 'Không có hạn';
+    return 'No due date';
   }
-  return date.toLocaleString('vi-VN', {
+  return date.toLocaleString('en-US', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -102,11 +102,11 @@ function StatusPanel({
             {STATUS_LABELS[status]}
           </Text>
           <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-            Hạn nộp: {formatDateTime(dueDate)}
+            Due: {formatDateTime(dueDate)}
           </Text>
           {submittedAt ? (
             <Text className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              Đã nộp: {formatDateTime(submittedAt)}
+              Submitted: {formatDateTime(submittedAt)}
             </Text>
           ) : null}
         </View>
@@ -159,7 +159,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
         const saved = await AsyncStorage.getItem(draftKey(assignmentId));
         if (alive) {
           setAnswerText(saved ?? assignmentData.answerText ?? '');
-          setDraftSavedAt(saved ? 'Đã khôi phục nháp' : null);
+          setDraftSavedAt(saved ? 'Draft restored' : null);
           setDraftLoaded(true);
         }
       } catch {
@@ -185,7 +185,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
     saveTimerRef.current = setTimeout(() => {
       const next = answerText;
       void AsyncStorage.setItem(draftKey(assignmentId), next).then(() => {
-        setDraftSavedAt('Đã lưu nháp');
+        setDraftSavedAt('Draft saved');
       });
     }, DRAFT_SAVE_MS);
     return () => {
@@ -203,8 +203,8 @@ export default function AssignmentDetailScreen(): React.ReactElement {
     if (trimmed.length === 0) {
       Toast.show({
         type: 'error',
-        text1: 'Chưa có nội dung',
-        text2: 'Vui lòng nhập câu trả lời trước khi nộp.',
+        text1: 'No content yet',
+        text2: 'Please enter your answer before submitting.',
       });
       return;
     }
@@ -218,16 +218,16 @@ export default function AssignmentDetailScreen(): React.ReactElement {
       setDraftSavedAt(null);
       Toast.show({
         type: 'success',
-        text1: 'Đã nộp bài',
-        text2: 'Bài tự luận của bạn đã được ghi nhận.',
+        text1: 'Submitted',
+        text2: 'Your written assignment has been recorded.',
       });
       void assignment.refetch();
     } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Nộp bài thất bại',
+        text1: 'Submission failed',
         text2:
-          (error as { message?: string }).message ?? 'Vui lòng thử lại sau.',
+          (error as { message?: string }).message ?? 'Please try again later.',
       });
     }
   }, [
@@ -241,20 +241,20 @@ export default function AssignmentDetailScreen(): React.ReactElement {
 
   const confirmSubmit = useCallback((): void => {
     Alert.alert(
-      'Nộp assignment?',
-      'Sau khi nộp, bạn chỉ có thể xem lại nội dung đã gửi.',
+      'Submit assignment?',
+      'After submitting, you can only review the submitted content.',
       [
-        { text: 'Huỷ', style: 'cancel' },
-        { text: 'Nộp bài', onPress: () => void handleSubmit() },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Submit', onPress: () => void handleSubmit() },
       ],
     );
   }, [handleSubmit]);
 
   const answerHelper = useMemo(() => {
     if (isReadOnly) {
-      return 'Nội dung đã nộp';
+      return 'Submitted content';
     }
-    return draftSavedAt ?? 'Nháp được lưu tự động trên thiết bị này';
+    return draftSavedAt ?? 'Draft is saved automatically on this device';
   }, [draftSavedAt, isReadOnly]);
 
   if (assignment.isError) {
@@ -273,7 +273,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
   if (assignment.isLoading || !draftLoaded) {
     return (
       <Screen>
-        <Loading text="Đang tải assignment..." />
+        <Loading text="Loading assignment..." />
       </Screen>
     );
   }
@@ -282,7 +282,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
     return (
       <Screen>
         <ErrorView
-          error="Không tìm thấy assignment."
+          error="Assignment not found."
           onRetry={() => {
             void assignment.refetch();
           }}
@@ -321,7 +321,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
           {assignmentData.instructions ? (
             <Card className="mb-4">
               <Text className="text-xs uppercase font-semibold text-slate-500 mb-2">
-                Yêu cầu
+                Requirements
               </Text>
               <Text className="text-sm text-slate-800 dark:text-slate-100 leading-5">
                 {assignmentData.instructions}
@@ -332,20 +332,19 @@ export default function AssignmentDetailScreen(): React.ReactElement {
           {assignmentData.status === 'overdue' ? (
             <View className="mb-4 p-4 rounded-2xl bg-rose-50 border border-rose-100">
               <Text className="text-sm font-semibold text-rose-700">
-                Assignment đã quá hạn
+                Assignment is overdue
               </Text>
               <Text className="text-xs text-rose-600 mt-1">
-                Bạn vẫn có thể thử nộp; hệ thống sẽ quyết định có chấp nhận bài
-                nộp muộn hay không.
+                You can still try to submit; the system will decide whether late submissions are accepted.
               </Text>
             </View>
           ) : null}
 
           <Input
-            label="Bài làm"
+            label="Your answer"
             value={answerText}
             onChangeText={setAnswerText}
-            placeholder="Nhập câu trả lời tự luận..."
+            placeholder="Enter your written answer..."
             multiline
             editable={!isReadOnly && !submitAssignment.isPending}
             textAlignVertical="top"
@@ -356,7 +355,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
           {assignmentData.feedback ? (
             <Card className="mt-4">
               <Text className="text-xs uppercase font-semibold text-slate-500 mb-2">
-                Nhận xét
+                Feedback
               </Text>
               <Text className="text-sm text-slate-800 dark:text-slate-100 leading-5">
                 {assignmentData.feedback}
@@ -367,7 +366,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
           {typeof assignmentData.score === 'number' ? (
             <Card className="mt-4">
               <Text className="text-xs uppercase font-semibold text-slate-500 mb-1">
-                Điểm
+                Score
               </Text>
               <Text className="text-2xl font-bold text-primary">
                 {assignmentData.score.toFixed(1)}
@@ -379,7 +378,7 @@ export default function AssignmentDetailScreen(): React.ReactElement {
         {!isReadOnly ? (
           <View className="px-5 pt-3 pb-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
             <Button
-              label="Nộp bài"
+              label="Submit"
               onPress={confirmSubmit}
               disabled={!canSubmit}
               loading={submitAssignment.isPending}

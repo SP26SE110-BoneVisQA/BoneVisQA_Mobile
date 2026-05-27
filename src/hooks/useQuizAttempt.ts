@@ -300,7 +300,7 @@ export function useQuizAttempt(quizId: string): UseQuizAttemptResult {
     if (!attempt) {
       throw {
         status: 0,
-        message: 'Không có bài làm để nộp',
+        message: 'There is no attempt to submit',
       } as ApiError;
     }
     setIsSubmitting(true);

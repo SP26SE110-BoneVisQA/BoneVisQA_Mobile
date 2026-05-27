@@ -37,7 +37,7 @@ function toLoginSuccess(response: LoginResponse): LoginSuccess {
   ) {
     const error: ApiError = {
       status: 401,
-      message: response.message ?? 'Đăng nhập thất bại',
+      message: response.message ?? 'Login failed',
     };
     throw error;
   }

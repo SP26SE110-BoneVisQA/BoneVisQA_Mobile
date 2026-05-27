@@ -29,9 +29,9 @@ import type { AuthStackParamList } from '../../navigation/types';
 const loginSchema = z.object({
   email: z
     .string()
-    .min(1, 'Vui lòng nhập email')
-    .email('Email không hợp lệ'),
-  password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
+    .min(1, 'Please enter your email')
+    .email('Invalid email'),
+  password: z.string().min(1, 'Please enter your password'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -57,7 +57,7 @@ export default function LoginScreen(): React.ReactElement {
       onError: (error) => {
         Toast.show({
           type: 'error',
-          text1: 'Đăng nhập thất bại',
+          text1: 'Login failed',
           text2: error.message,
         });
       },
@@ -84,12 +84,12 @@ export default function LoginScreen(): React.ReactElement {
             </Text>
             <View className="bg-primary/10 px-3 py-1 rounded-full mt-2 border border-primary/20">
               <Text className="text-primary-light text-sm font-medium">
-                Cổng học viên
+                Student portal
               </Text>
             </View>
           </View>
 
-          <Text className="text-slate-400 text-lg mb-6">Chào mừng trở lại!</Text>
+          <Text className="text-slate-400 text-lg mb-6">Welcome back!</Text>
 
           <Controller
             control={control}
@@ -118,8 +118,8 @@ export default function LoginScreen(): React.ReactElement {
             render={({ field: { value, onChange, onBlur } }) => (
               <View className="mb-2">
                 <Input
-                  label="Mật khẩu"
-                  placeholder="Nhập mật khẩu"
+                  label="Password"
+                  placeholder="Enter password"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
@@ -143,13 +143,13 @@ export default function LoginScreen(): React.ReactElement {
           <View className="items-end mb-6">
             <Pressable onPress={() => navigation.navigate('ForgotPassword')}>
               <Text className="text-primary-light text-sm font-medium">
-                Quên mật khẩu?
+                Forgot password?
               </Text>
             </Pressable>
           </View>
 
           <Button
-            label="Đăng nhập"
+            label="Log in"
             variant="primary"
             size="lg"
             fullWidth
@@ -158,20 +158,20 @@ export default function LoginScreen(): React.ReactElement {
           />
 
           <View className="mt-8 flex-row justify-center items-center">
-            <Text className="text-slate-500 text-sm">Chưa có tài khoản?</Text>
+            <Text className="text-slate-500 text-sm">Do not have an account?</Text>
             <Pressable
               className="ml-2"
               onPress={() => navigation.navigate('Register')}
             >
               <Text className="text-primary-light text-sm font-bold">
-                Đăng ký
+                Sign up
               </Text>
             </Pressable>
           </View>
 
           <View className="mt-auto pt-10 items-center opacity-40">
             <Text className="text-slate-500 text-xs italic">
-              Nền tảng trực quan hóa & hỏi đáp xương khớp
+              Bone visualization and Q&A platform
             </Text>
           </View>
         </ScrollView>

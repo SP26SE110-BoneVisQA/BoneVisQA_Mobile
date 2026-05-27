@@ -30,15 +30,15 @@ type Navigation = NativeStackNavigationProp<
 
 const passwordSchema = z
   .object({
-    currentPassword: z.string().min(1, 'Vui lòng nhập mật khẩu hiện tại'),
+    currentPassword: z.string().min(1, 'Please enter your current password'),
     newPassword: z
       .string()
-      .min(8, 'Mật khẩu mới tối thiểu 8 ký tự')
-      .max(128, 'Mật khẩu quá dài'),
-    confirmPassword: z.string().min(1, 'Vui lòng xác nhận mật khẩu'),
+      .min(8, 'New password must be at least 8 characters')
+      .max(128, 'Password is too long'),
+    confirmPassword: z.string().min(1, 'Please confirm your password'),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Mật khẩu xác nhận không khớp',
+    message: 'Passwords do not match',
     path: ['confirmPassword'],
   });
 
@@ -79,8 +79,8 @@ export default function ChangePasswordScreen(): React.ReactElement {
     if (!user?.email) {
       Toast.show({
         type: 'error',
-        text1: 'Không tìm thấy email',
-        text2: 'Vui lòng đăng xuất và đăng nhập lại.',
+        text1: 'Email not found',
+        text2: 'Please log out and log in again.',
       });
       return;
     }
@@ -90,17 +90,17 @@ export default function ChangePasswordScreen(): React.ReactElement {
         onSuccess: () => {
           Toast.show({
             type: 'success',
-            text1: 'Đã cập nhật mật khẩu',
+            text1: 'Password updated',
           });
           navigation.goBack();
         },
         onError: (err) => {
           Toast.show({
             type: 'error',
-            text1: 'Đổi mật khẩu thất bại',
+            text1: 'Change password failed',
             text2:
               err.message ||
-              'Backend chưa có endpoint đổi mật khẩu trực tiếp. Vui lòng sử dụng quên mật khẩu.',
+              'The backend does not have a direct change-password endpoint yet. Please use forgot password.',
           });
         },
       },
@@ -111,7 +111,7 @@ export default function ChangePasswordScreen(): React.ReactElement {
     <Screen scroll>
       <View className="flex-1">
         <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-          Đổi mật khẩu
+          Change password
         </Text>
 
         <Card className="mb-6 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/50">
@@ -121,12 +121,10 @@ export default function ChangePasswordScreen(): React.ReactElement {
             </View>
             <View className="flex-1">
               <Text className="text-amber-900 dark:text-amber-200 text-sm font-semibold mb-1">
-                Lưu ý: tính năng đang chờ backend
+                Note: this feature is waiting for backend support
               </Text>
               <Text className="text-amber-800 dark:text-amber-300 text-xs leading-5">
-                Backend hiện chưa có endpoint đổi mật khẩu chuyên dụng. Tạm thời
-                ứng dụng sẽ gọi endpoint đặt lại mật khẩu. Nếu không thành công,
-                vui lòng dùng chức năng "Quên mật khẩu".
+                The backend does not currently have a dedicated change-password endpoint. For now, the app will call the password reset endpoint. If it fails, please use "Forgot password".
               </Text>
             </View>
           </View>
@@ -138,7 +136,7 @@ export default function ChangePasswordScreen(): React.ReactElement {
             name="currentPassword"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Mật khẩu hiện tại"
+                label="Current password"
                 placeholder="••••••••"
                 value={value}
                 onChangeText={onChange}
@@ -164,8 +162,8 @@ export default function ChangePasswordScreen(): React.ReactElement {
             name="newPassword"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Mật khẩu mới"
-                placeholder="Tối thiểu 8 ký tự"
+                label="New password"
+                placeholder="At least 8 characters"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -190,8 +188,8 @@ export default function ChangePasswordScreen(): React.ReactElement {
             name="confirmPassword"
             render={({ field: { value, onChange, onBlur } }) => (
               <Input
-                label="Xác nhận mật khẩu mới"
-                placeholder="Nhập lại mật khẩu mới"
+                label="Confirm new password"
+                placeholder="Re-enter new password"
                 value={value}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -214,7 +212,7 @@ export default function ChangePasswordScreen(): React.ReactElement {
 
         <View className="mt-6 mb-8">
           <Button
-            label="Cập nhật mật khẩu"
+            label="Update password"
             variant="primary"
             size="lg"
             fullWidth

@@ -83,7 +83,7 @@ export default function CaseListScreen(): React.ReactElement {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Ca lâm sàng',
+      title: 'Clinical cases',
       headerRight: () => (
         <Pressable
           onPress={() => navigation.navigate('CaseHistory')}
@@ -119,7 +119,7 @@ export default function CaseListScreen(): React.ReactElement {
       <Input
         value={search}
         onChangeText={setSearch}
-        placeholder="Tìm case..."
+        placeholder="Search cases..."
         leftIcon={<SearchIcon size={18} color="#64748b" />}
       />
       <Pressable
@@ -128,7 +128,7 @@ export default function CaseListScreen(): React.ReactElement {
       >
         <SlidersHorizontal size={16} color="#0f766e" />
         <Text className="ml-2 text-primary font-semibold text-sm">
-          {filtersOpen ? 'Ẩn bộ lọc' : 'Hiện bộ lọc'}
+          {filtersOpen ? 'Hide filters' : 'Show filters'}
         </Text>
         {hasAnyFilter(filters) ? (
           <Pressable
@@ -136,7 +136,7 @@ export default function CaseListScreen(): React.ReactElement {
             className="ml-auto"
           >
             <Text className="text-rose-600 text-xs font-semibold">
-              Xoá lọc
+              Clear filters
             </Text>
           </Pressable>
         ) : null}
@@ -152,7 +152,7 @@ export default function CaseListScreen(): React.ReactElement {
   if (isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải ca lâm sàng..." />
+        <Loading text="Loading clinical cases..." />
       </Screen>
     );
   }
@@ -170,8 +170,8 @@ export default function CaseListScreen(): React.ReactElement {
       <View className="px-5 pt-4">{header}</View>
       {filtered.length === 0 ? (
         <EmptyState
-          title="Không có ca nào phù hợp"
-          subtitle="Thử thay đổi từ khoá hoặc bộ lọc."
+          title="No matching cases"
+          subtitle="Try changing the keyword or filters."
         />
       ) : (
         <FlatList

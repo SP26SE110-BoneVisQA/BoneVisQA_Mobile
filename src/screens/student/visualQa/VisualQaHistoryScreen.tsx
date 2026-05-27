@@ -17,13 +17,14 @@ import type { VisualQaStackParamList } from '../../../navigation/types';
 type Navigation = NativeStackNavigationProp<VisualQaStackParamList, 'VisualQaHistory'>;
 
 const FILTERS: Array<{ value: VisualQaHistoryFilter; label: string }> = [
-  { value: 'all', label: 'Tất cả' },
-  { value: 'cases', label: 'Theo ca' },
-  { value: 'personal', label: 'Cá nhân' },
+  { value: 'all', label: 'All' },
+  { value: 'cases', label: 'Case-based' },
+  { value: 'studies', label: 'Personal studies' },
+  { value: 'personal', label: 'Personal' },
 ];
 
 function dateLabel(value?: string): string {
-  return value ? new Date(value).toLocaleString('vi-VN') : '';
+  return value ? new Date(value).toLocaleString('en-US') : '';
 }
 
 export default function VisualQaHistoryScreen(): React.ReactElement {
@@ -37,7 +38,7 @@ export default function VisualQaHistoryScreen(): React.ReactElement {
   if (history.isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải lịch sử Visual QA..." />
+        <Loading text="Loading Visual QA history..." />
       </Screen>
     );
   }
@@ -57,7 +58,7 @@ export default function VisualQaHistoryScreen(): React.ReactElement {
       refresh={{ refreshing: history.isRefetching, onRefresh: () => void history.refetch() }}
     >
       <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-        Lịch sử Visual QA
+        History Visual QA
       </Text>
       <View className="flex-row gap-2 mb-4">
         {FILTERS.map((item) => (
@@ -80,8 +81,8 @@ export default function VisualQaHistoryScreen(): React.ReactElement {
       {items.length === 0 ? (
         <EmptyState
           icon={<History size={40} color="#14b8a6" />}
-          title="Chưa có phiên Visual QA"
-          subtitle="Các cuộc trao đổi AI của bạn sẽ hiển thị tại đây."
+          title="No Visual QA sessions yet"
+          subtitle="Your AI conversations will appear here."
         />
       ) : (
         items.map((item) => (
@@ -93,15 +94,15 @@ export default function VisualQaHistoryScreen(): React.ReactElement {
             }
           >
             <Text className="text-base font-semibold text-slate-900 dark:text-white">
-              {item.questionSnippet ?? 'Hội thoại Visual QA'}
+              {item.questionSnippet ?? 'Visual QA conversation'}
             </Text>
             <Text className="text-xs text-slate-500 mt-2">
-              {item.caseId ? 'Theo ca' : 'Ảnh cá nhân'}
+              {item.caseId ? 'Case-based' : 'Personal image'}
               {item.updatedAt ? ` - ${dateLabel(item.updatedAt)}` : ''}
             </Text>
             {item.reviewState ? (
               <Text className="text-xs font-semibold text-primary mt-2">
-                Trạng thái review: {item.reviewState}
+                Review status: {item.reviewState}
               </Text>
             ) : null}
           </Card>

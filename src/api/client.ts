@@ -71,7 +71,7 @@ function toApiError(error: unknown): ApiError {
     const responseData = axiosError.response?.data;
     const message = extractMessage(
       responseData,
-      axiosError.message || 'Đã xảy ra lỗi không xác định',
+      axiosError.message || 'Something went wrong',
     );
     const details =
       responseData && typeof responseData === 'object'
@@ -87,7 +87,7 @@ function toApiError(error: unknown): ApiError {
   if (error instanceof Error) {
     return { status: 0, message: error.message };
   }
-  return { status: 0, message: 'Đã xảy ra lỗi không xác định' };
+  return { status: 0, message: 'Something went wrong' };
 }
 
 api.interceptors.response.use(

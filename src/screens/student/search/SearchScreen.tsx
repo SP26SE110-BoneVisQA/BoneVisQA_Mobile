@@ -35,10 +35,10 @@ interface Section {
 }
 
 const SECTION_LABELS: Record<SearchResultType, string> = {
-  case: 'Ca lâm sàng',
+  case: 'Clinical cases',
   quiz: 'Quiz',
-  announcement: 'Thông báo',
-  document: 'Tài liệu',
+  announcement: 'Notifications',
+  document: 'Document',
 };
 
 async function loadRecent(): Promise<string[]> {
@@ -212,8 +212,8 @@ export default function SearchScreen(): React.ReactElement {
       return (
         <EmptyState
           icon={<History size={40} color="#94a3b8" />}
-          title="Chưa có tìm kiếm gần đây"
-          subtitle="Nhập ít nhất 2 ký tự để tìm kiếm"
+          title="No recent searches yet"
+          subtitle="Enter at least 2 characters to search"
         />
       );
     }
@@ -221,11 +221,11 @@ export default function SearchScreen(): React.ReactElement {
       <View className="mt-2">
         <View className="flex-row items-center justify-between mb-3 px-1">
           <Text className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">
-            Tìm kiếm gần đây
+            Recent searches
           </Text>
           <Pressable onPress={clearRecent} hitSlop={8}>
             <Text className="text-xs text-primary font-semibold">
-              Xoá lịch sử
+              Clear history
             </Text>
           </Pressable>
         </View>
@@ -250,12 +250,12 @@ export default function SearchScreen(): React.ReactElement {
       return renderRecent();
     }
     if (isLoading) {
-      return <Loading text="Đang tìm..." />;
+      return <Loading text="Searching..." />;
     }
     if (isError) {
       return (
         <ErrorView
-          error={error ?? 'Tìm kiếm thất bại'}
+          error={error ?? 'Search failed'}
           onRetry={() => {
             void refetch();
           }}
@@ -266,8 +266,8 @@ export default function SearchScreen(): React.ReactElement {
       return (
         <EmptyState
           icon={<SearchX size={40} color="#94a3b8" />}
-          title="Không có kết quả"
-          subtitle="Thử từ khoá khác"
+          title="No results"
+          subtitle="Try a different keyword"
         />
       );
     }
@@ -293,7 +293,7 @@ export default function SearchScreen(): React.ReactElement {
           value={query}
           onChangeText={setQuery}
           onSubmit={handleSubmit}
-          placeholder="Tìm ca, quiz, thông báo..."
+          placeholder="Search cases, quizzes, announcements..."
           autoFocus
         />
       </View>

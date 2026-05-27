@@ -3,11 +3,9 @@ import { Pressable, Text, View } from 'react-native';
 import { Bell, BookOpen, Info, Megaphone } from 'lucide-react-native';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import 'dayjs/locale/vi';
 import type { AppNotification, NotificationType } from '../../types/notification';
 
 dayjs.extend(relativeTime);
-dayjs.locale('vi');
 
 export interface NotificationItemProps {
   notification: AppNotification;

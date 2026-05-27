@@ -29,22 +29,22 @@ export default function VisualQaThreadScreen(): React.ReactElement {
   const requestReview = useMutation<void, ApiError, string>({
     mutationFn: (turnId) => requestVisualQaReview(turnId, sessionId),
     onSuccess: async () => {
-      Toast.show({ type: 'success', text1: 'Đã gửi yêu cầu review' });
+      Toast.show({ type: 'success', text1: 'Review request sent' });
       await queryClient.invalidateQueries({ queryKey: ['visual-qa-thread', sessionId] });
       await queryClient.invalidateQueries({ queryKey: ['visual-qa-history'] });
     },
     onError: (error) => {
-      Toast.show({ type: 'error', text1: 'Không thể gửi review', text2: error.message });
+      Toast.show({ type: 'error', text1: 'Could not request review', text2: error.message });
     },
   });
 
   const confirmReview = (turnId: string): void => {
     Alert.alert(
-      'Yêu cầu chuyên gia review',
-      'Gửi lượt trả lời này để chuyên gia xem lại?',
+      'Request expert review',
+      'Send this answer for expert review?',
       [
-        { text: 'Hủy', style: 'cancel' },
-        { text: 'Gửi yêu cầu review', onPress: () => requestReview.mutate(turnId) },
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Request review', onPress: () => requestReview.mutate(turnId) },
       ],
     );
   };
@@ -52,7 +52,7 @@ export default function VisualQaThreadScreen(): React.ReactElement {
   if (thread.isLoading) {
     return (
       <Screen>
-        <Loading text="Đang tải nội dung trao đổi..." />
+        <Loading text="Loading conversation..." />
       </Screen>
     );
   }
@@ -67,7 +67,7 @@ export default function VisualQaThreadScreen(): React.ReactElement {
   if (!data || data.turns.length === 0) {
     return (
       <Screen>
-        <EmptyState title="Chưa có nội dung" subtitle="Phiên này không có lượt hỏi đáp." />
+        <EmptyState title="No content yet" subtitle="This session has no Q&A turns." />
       </Screen>
     );
   }
@@ -78,7 +78,7 @@ export default function VisualQaThreadScreen(): React.ReactElement {
       refresh={{ refreshing: thread.isRefetching, onRefresh: () => void thread.refetch() }}
     >
       <Text className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-        Chi tiết hội thoại
+        Conversation detail
       </Text>
       {data.blockingNotice ? (
         <Card className="mb-4 bg-amber-50">
@@ -88,21 +88,21 @@ export default function VisualQaThreadScreen(): React.ReactElement {
       {data.turns.map((turn, index) => (
         <View key={turn.id ?? `turn-${index}`} className="mb-4">
           <Card className="mb-2 bg-primary/5">
-            <Text className="text-xs uppercase font-semibold text-primary mb-1">Câu hỏi</Text>
+            <Text className="text-xs uppercase font-semibold text-primary mb-1">Question</Text>
             <Text className="text-sm text-slate-800 dark:text-white">{turn.question}</Text>
           </Card>
           <Card>
-            <Text className="text-xs uppercase font-semibold text-slate-500 mb-1">Trả lời</Text>
+            <Text className="text-xs uppercase font-semibold text-slate-500 mb-1">Answer</Text>
             <Text className="text-sm text-slate-800 dark:text-white">{turn.answer}</Text>
             {turn.reviewState ? (
               <Text className="text-xs font-semibold text-primary mt-3">
-                Trạng thái review: {turn.reviewState}
+                Review status: {turn.reviewState}
               </Text>
             ) : null}
             {data.capabilities?.canRequestReview && turn.isReviewTarget && turn.id ? (
               <View className="mt-3">
                 <Button
-                  label="Yêu cầu review"
+                  label="Request review"
                   size="sm"
                   variant="outline"
                   loading={requestReview.isPending}
@@ -115,7 +115,7 @@ export default function VisualQaThreadScreen(): React.ReactElement {
       ))}
       {data.capabilities?.canAskNext && !data.capabilities.isReadOnly ? (
         <Button
-          label="Tiếp tục hội thoại"
+          label="Continue conversation"
           onPress={() =>
             navigation.navigate('VisualQaChat', {
               caseId: data.caseId,
