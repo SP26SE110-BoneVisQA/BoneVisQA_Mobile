@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -42,6 +42,7 @@ export default function QuizPlayScreen(): React.ReactElement {
   } = useQuizAttempt(quizId);
 
   const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
+  const submitLockRef = useRef<boolean>(false);
 
   // Intercept back nav while in progress
   useEffect(() => {
@@ -93,6 +94,10 @@ export default function QuizPlayScreen(): React.ReactElement {
   const isFirst = currentIndex === 0;
 
   const handleSubmit = useCallback(async (): Promise<void> => {
+    if (submitLockRef.current) {
+      return;
+    }
+    submitLockRef.current = true;
     try {
       const result = await submit();
       Toast.show({
@@ -112,11 +117,15 @@ export default function QuizPlayScreen(): React.ReactElement {
           (err as { message?: string }).message ?? 'Please try again later.',
       });
     } finally {
+      submitLockRef.current = false;
       setConfirmVisible(false);
     }
-  }, [navigation, submit]);
+  }, [navigation, quizId, submit]);
 
   const confirmSubmit = useCallback((): void => {
+    if (isSubmitting || submitLockRef.current) {
+      return;
+    }
     setConfirmVisible(true);
     Alert.alert(
       'Submit?',
@@ -134,7 +143,7 @@ export default function QuizPlayScreen(): React.ReactElement {
         },
       ],
     );
-  }, [handleSubmit]);
+  }, [handleSubmit, isSubmitting]);
 
   if (isLoading) {
     return (
@@ -218,6 +227,7 @@ export default function QuizPlayScreen(): React.ReactElement {
               label="Submit"
               onPress={confirmSubmit}
               loading={isSubmitting}
+              disabled={isSubmitting}
               fullWidth
             />
           ) : (

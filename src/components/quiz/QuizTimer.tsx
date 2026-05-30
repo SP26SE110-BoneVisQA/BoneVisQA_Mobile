@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Clock } from 'lucide-react-native';
 
@@ -22,6 +22,8 @@ export function QuizTimer({
   startedAt,
   onExpire,
 }: QuizTimerProps): React.ReactElement {
+  const expiredRef = useRef<boolean>(false);
+  const onExpireRef = useRef<QuizTimerProps['onExpire']>(onExpire);
   const [remaining, setRemaining] = useState<number>(() => {
     const startMs = new Date(startedAt).getTime();
     const endMs = startMs + durationMinutes * 60 * 1000;
@@ -29,14 +31,20 @@ export function QuizTimer({
   });
 
   useEffect(() => {
+    onExpireRef.current = onExpire;
+  }, [onExpire]);
+
+  useEffect(() => {
+    expiredRef.current = false;
     const startMs = new Date(startedAt).getTime();
     const endMs = startMs + durationMinutes * 60 * 1000;
 
     const tick = (): void => {
       const diff = Math.max(0, Math.floor((endMs - Date.now()) / 1000));
       setRemaining(diff);
-      if (diff <= 0 && onExpire) {
-        onExpire();
+      if (diff <= 0 && onExpireRef.current && !expiredRef.current) {
+        expiredRef.current = true;
+        onExpireRef.current();
       }
     };
 
@@ -45,7 +53,7 @@ export function QuizTimer({
     return () => {
       clearInterval(id);
     };
-  }, [durationMinutes, onExpire, startedAt]);
+  }, [durationMinutes, startedAt]);
 
   const critical = remaining <= 60;
   const container = critical
