@@ -109,7 +109,7 @@ function QuestionReviewCard({
 export default function QuizReviewScreen(): React.ReactElement {
   const navigation = useNavigation<NavProp>();
   const route = useRoute<RouteType>();
-  const { attemptId } = route.params;
+  const { attemptId, quizId } = route.params;
   const retake = useRequestRetake();
 
   const { data, isLoading, isError, error, refetch } = useQuery<
@@ -117,11 +117,12 @@ export default function QuizReviewScreen(): React.ReactElement {
     ApiError
   >({
     queryKey: quizKeys.review(attemptId),
-    queryFn: () => getReview(attemptId),
+    queryFn: () => getReview(attemptId, quizId),
   });
 
   const handleRetake = useCallback(async (): Promise<void> => {
-    if (!data?.quizId) {
+    const originalQuizId = data?.quizId || quizId;
+    if (!originalQuizId) {
       Toast.show({
         type: 'error',
         text1: 'Original quiz not found',
@@ -129,7 +130,7 @@ export default function QuizReviewScreen(): React.ReactElement {
       return;
     }
     try {
-      await retake.mutateAsync(data.quizId);
+      await retake.mutateAsync(originalQuizId);
       Toast.show({
         type: 'success',
         text1: 'Retake request sent',
@@ -141,7 +142,7 @@ export default function QuizReviewScreen(): React.ReactElement {
         text2: (err as { message?: string }).message,
       });
     }
-  }, [data, retake]);
+  }, [data, quizId, retake]);
 
   if (isLoading) {
     return (
@@ -169,6 +170,7 @@ export default function QuizReviewScreen(): React.ReactElement {
 
   const correct = data.correctAnswers ?? 0;
   const total = data.totalQuestions ?? data.questions.length;
+  const canRequestRetake = typeof data.score === 'number';
 
   return (
     <Screen scroll>
@@ -202,16 +204,18 @@ export default function QuizReviewScreen(): React.ReactElement {
       ))}
 
       <View className="flex-row gap-3 mt-2 mb-6">
-        <View className="flex-1">
-          <Button
-            label="Retake"
-            variant="outline"
-            onPress={() => void handleRetake()}
-            loading={retake.isPending}
-            leftIcon={<RotateCcw size={16} color="#14b8a6" />}
-            fullWidth
-          />
-        </View>
+        {canRequestRetake ? (
+          <View className="flex-1">
+            <Button
+              label="Retake"
+              variant="outline"
+              onPress={() => void handleRetake()}
+              loading={retake.isPending}
+              leftIcon={<RotateCcw size={16} color="#14b8a6" />}
+              fullWidth
+            />
+          </View>
+        ) : null}
         <View className="flex-1">
           <Button
             label="Back to list"

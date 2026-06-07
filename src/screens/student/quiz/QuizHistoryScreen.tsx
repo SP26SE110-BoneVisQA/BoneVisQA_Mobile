@@ -146,7 +146,12 @@ export default function QuizHistoryScreen(): React.ReactElement {
         renderItem={({ item }) => (
           <AttemptRow
             item={item}
-            onPress={() => navigation.navigate('QuizReview', { attemptId: item.id })}
+            onPress={() =>
+              navigation.navigate('QuizReview', {
+                attemptId: item.id,
+                quizId: item.quizId,
+              })
+            }
             onDelete={
               item.status === 'in_progress' ? () => handleDelete(item.id) : undefined
             }

@@ -15,6 +15,7 @@ export type QuizStatus =
 
 export interface Quiz {
   id: string;
+  attemptId?: string;
   title: string;
   description?: string;
   classId?: string;
@@ -176,4 +177,21 @@ export interface GeneratedPracticeResult {
   title?: string;
   topic?: string;
   questions: Question[];
+}
+
+export interface QuizCaseInput {
+  caseId?: string;
+  caseTitle?: string;
+  caseDescription?: string;
+  imageUrl?: string;
+  modality?: string;
+  keyFindings?: string;
+  suggestedDiagnosis?: string;
+  difficulty?: string;
+}
+
+export interface PracticeFromCasesDto {
+  cases: QuizCaseInput[];
+  difficulty: PracticeDifficulty;
+  count: number;
 }

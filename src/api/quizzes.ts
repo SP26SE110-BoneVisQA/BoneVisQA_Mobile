@@ -3,15 +3,18 @@ import type {
   Attempt,
   GeneratedPracticeResult,
   PracticeGenerateDto,
+  PracticeFromCasesDto,
   Question,
   QuestionOption,
   QuestionType,
+  QuizCaseInput,
   Quiz,
   QuizListParams,
   ReviewQuestion,
   ReviewResult,
   StartQuizResult,
 } from '../types/quiz';
+import { API_BASE_URL } from '../constants/env';
 
 /**
  * Raw DTO shapes — kept `unknown`-ish so we map defensively.
@@ -19,6 +22,7 @@ import type {
  */
 interface RawQuizListItemDto {
   quizId?: string;
+  attemptId?: string | null;
   title?: string | null;
   classId?: string;
   className?: string | null;
@@ -63,6 +67,17 @@ interface RawStudentGeneratedQuizAttemptDto {
   topic?: string | null;
   questions?: RawStudentQuizQuestionDto[] | null;
   savedToHistory?: boolean;
+}
+
+interface RawQuizCaseInputDto {
+  caseId?: string | null;
+  caseTitle?: string | null;
+  caseDescription?: string | null;
+  imageUrl?: string | null;
+  modality?: string | null;
+  keyFindings?: string | null;
+  suggestedDiagnosis?: string | null;
+  difficulty?: string | null;
 }
 
 interface RawQuestionReviewItemDto {
@@ -171,6 +186,28 @@ function parseAnswerIds(raw: string | null | undefined): string[] {
     .filter((s) => OPTION_LETTERS.includes(s as 'A' | 'B' | 'C' | 'D'));
 }
 
+function resolveImageUrl(value?: string | null): string | undefined {
+  const raw = value?.trim();
+  if (!raw) {
+    return undefined;
+  }
+  const normalized = raw.replace(/\\/g, '/');
+  const apiBase = API_BASE_URL.replace(/\/+$/, '');
+  const localServerMatch = normalized.match(
+    /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(\/.*)$/i,
+  );
+  if (localServerMatch) {
+    return `${apiBase}${localServerMatch[1]}`;
+  }
+  if (/^(https?:|file:|data:|blob:)/i.test(normalized)) {
+    return normalized;
+  }
+  if (normalized.startsWith('//')) {
+    return `https:${normalized}`;
+  }
+  return `${apiBase}/${normalized.replace(/^\/+/, '')}`;
+}
+
 function mapQuestion(dto: RawStudentQuizQuestionDto): Question {
   const hasImage = typeof dto.imageUrl === 'string' && dto.imageUrl.length > 0;
   return {
@@ -178,7 +215,7 @@ function mapQuestion(dto: RawStudentQuizQuestionDto): Question {
     type: normalizeQuestionType(dto.type, hasImage),
     prompt: dto.questionText ?? '',
     options: buildOptions(dto),
-    imageUrl: dto.imageUrl ?? undefined,
+    imageUrl: resolveImageUrl(dto.imageUrl),
     caseId: dto.caseId ?? undefined,
     caseTitle: dto.caseTitle ?? undefined,
   };
@@ -188,6 +225,7 @@ function mapQuizListItem(dto: RawQuizListItemDto): Quiz {
   const completed = dto.isCompleted === true;
   return {
     id: dto.quizId ?? '',
+    attemptId: dto.attemptId ?? undefined,
     title: dto.title ?? '',
     classId: dto.classId,
     className: dto.className ?? undefined,
@@ -251,11 +289,24 @@ function mapReviewQuestion(dto: RawQuestionReviewItemDto): ReviewQuestion {
     type: normalizeQuestionType(null, hasImage),
     prompt: dto.questionText ?? '',
     options,
-    imageUrl: dto.imageUrl ?? undefined,
+    imageUrl: resolveImageUrl(dto.imageUrl),
     caseId: dto.caseId ?? undefined,
     correctOptionIds: correct,
     selected,
     isCorrect: dto.isCorrect === true,
+  };
+}
+
+function mapQuizCase(dto: RawQuizCaseInputDto): QuizCaseInput {
+  return {
+    caseId: dto.caseId ?? undefined,
+    caseTitle: dto.caseTitle ?? undefined,
+    caseDescription: dto.caseDescription ?? undefined,
+    imageUrl: resolveImageUrl(dto.imageUrl),
+    modality: dto.modality ?? undefined,
+    keyFindings: dto.keyFindings ?? undefined,
+    suggestedDiagnosis: dto.suggestedDiagnosis ?? undefined,
+    difficulty: dto.difficulty ?? undefined,
   };
 }
 
@@ -400,11 +451,14 @@ export async function getHistory(): Promise<Attempt[]> {
   }
 }
 
-export async function getReview(attemptId: string): Promise<ReviewResult> {
+export async function getReview(
+  attemptId: string,
+  fallbackQuizId?: string,
+): Promise<ReviewResult> {
   const { data } = await api.get<RawQuizAttemptReviewDto>(
     `/api/student/quizzes/${attemptId}/review`,
   );
-  return mapReview(data);
+  return mapReview(data, fallbackQuizId);
 }
 
 export async function deleteAttempt(attemptId: string): Promise<void> {
@@ -413,6 +467,13 @@ export async function deleteAttempt(attemptId: string): Promise<void> {
 
 export async function requestRetake(quizId: string): Promise<void> {
   await api.post(`/api/student/quizzes/${quizId}/request-retake`);
+}
+
+export async function listQuizCases(): Promise<QuizCaseInput[]> {
+  const { data } = await api.get<RawQuizCaseInputDto[]>(
+    '/api/student/quizzes/cases',
+  );
+  return Array.isArray(data) ? data.map(mapQuizCase) : [];
 }
 
 export async function getPracticeList(): Promise<Quiz[]> {
@@ -449,6 +510,21 @@ export async function generatePractice(
   };
   const { data } = await api.post<RawStudentGeneratedQuizAttemptDto>(
     '/api/student/quizzes/practice/generate',
+    body,
+  );
+  return mapGeneratedAttempt(data);
+}
+
+export async function generatePracticeFromCases(
+  dto: PracticeFromCasesDto,
+): Promise<GeneratedPracticeResult> {
+  const body = {
+    cases: dto.cases,
+    questionCount: dto.count,
+    difficulty: dto.difficulty,
+  };
+  const { data } = await api.post<RawStudentGeneratedQuizAttemptDto>(
+    '/api/student/quizzes/practice/from-cases',
     body,
   );
   return mapGeneratedAttempt(data);
