@@ -13,7 +13,7 @@ import CaseCard from '../../../components/cases/CaseCard';
 import CaseFilters, {
   type CaseFiltersValue,
 } from '../../../components/cases/CaseFilters';
-import { filterCases, getCatalog } from '../../../api/cases';
+import { filterCases, listCases } from '../../../api/cases';
 import type { ApiError } from '../../../types/api';
 import type { Case } from '../../../types/case';
 import type { CasesStackParamList } from '../../../navigation/types';
@@ -56,7 +56,7 @@ export default function CaseListScreen(): React.ReactElement {
 
   const queryKey = useFilterEndpoint
     ? (['cases', 'filter', filters] as const)
-    : (['cases', 'catalog'] as const);
+    : (['cases', 'list'] as const);
 
   const {
     data = [],
@@ -73,7 +73,7 @@ export default function CaseListScreen(): React.ReactElement {
             modality: filters.modalities[0],
             difficulty: filters.difficulties[0],
           })
-        : getCatalog(),
+        : listCases(),
   });
 
   const filtered = React.useMemo(() => applyLocalSearch(data, search), [

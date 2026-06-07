@@ -1,4 +1,5 @@
 import type { NavigatorScreenParams } from '@react-navigation/native';
+import type { StartQuizResult } from '../types/quiz';
 
 export type RootStackParamList = {
   Auth: undefined;
@@ -17,7 +18,6 @@ export type AppTabParamList = {
   AssignmentsTab: NavigatorScreenParams<AssignmentsStackParamList> | undefined;
   CasesTab: NavigatorScreenParams<CasesStackParamList> | undefined;
   VisualQaTab: NavigatorScreenParams<VisualQaStackParamList> | undefined;
-  NotificationsTab: undefined;
   ProfileTab: undefined;
 };
 
@@ -25,12 +25,13 @@ export type HomeStackParamList = {
   Home: undefined;
   Search: undefined;
   Announcements: undefined;
+  Notifications: undefined;
 };
 
 export type QuizStackParamList = {
   QuizList: undefined;
-  QuizPlay: { quizId: string; attemptId?: string };
-  QuizReview: { attemptId: string };
+  QuizPlay: { quizId: string; attemptId?: string; initialAttempt?: StartQuizResult };
+  QuizReview: { attemptId: string; quizId?: string };
   QuizHistory: undefined;
   PracticeMode: undefined;
   Progress: undefined;

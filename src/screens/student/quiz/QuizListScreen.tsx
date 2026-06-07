@@ -4,12 +4,17 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { BarChart3, ClipboardList, History, Sparkles } from 'lucide-react-native';
+import Toast from 'react-native-toast-message';
 
 import Loading from '../../../components/common/Loading';
 import ErrorView from '../../../components/common/ErrorView';
 import EmptyState from '../../../components/common/EmptyState';
 import QuizCardListItem from '../../../components/quiz/QuizCardListItem';
-import { usePracticeList, useQuizzes } from '../../../hooks/useQuiz';
+import {
+  usePracticeList,
+  useQuizzes,
+  useRequestRetake,
+} from '../../../hooks/useQuiz';
 import type { QuizStackParamList } from '../../../navigation/types';
 import type { Quiz } from '../../../types/quiz';
 
@@ -26,6 +31,16 @@ const TABS: ReadonlyArray<TabDef> = [
   { key: 'assigned', label: 'Assigned' },
   { key: 'practice', label: 'Practice' },
 ];
+
+const ASSIGNMENT_NOT_OPEN_MESSAGE = "The assignment hasn't been opened yet.";
+
+function isBeforeOpenTime(openTime: string | undefined): boolean {
+  if (!openTime) {
+    return false;
+  }
+  const openAt = new Date(openTime).getTime();
+  return !Number.isNaN(openAt) && Date.now() < openAt;
+}
 
 function HeaderActions({
   onHistory,
@@ -62,6 +77,7 @@ export default function QuizListScreen(): React.ReactElement {
 
   const assignedQ = useQuizzes();
   const practiceQ = usePracticeList();
+  const requestRetake = useRequestRetake();
 
   const active = activeTab === 'assigned' ? assignedQ : practiceQ;
 
@@ -69,9 +85,53 @@ export default function QuizListScreen(): React.ReactElement {
 
   const handleOpen = useCallback(
     (quiz: Quiz): void => {
+      if (isBeforeOpenTime(quiz.openTime)) {
+        Toast.show({
+          type: 'info',
+          text1: ASSIGNMENT_NOT_OPEN_MESSAGE,
+        });
+        return;
+      }
       navigation.navigate('QuizPlay', { quizId: quiz.id });
     },
     [navigation],
+  );
+
+  const handleReview = useCallback(
+    (quiz: Quiz): void => {
+      if (!quiz.attemptId) {
+        Toast.show({
+          type: 'error',
+          text1: 'Attempt not found',
+        });
+        return;
+      }
+      navigation.navigate('QuizReview', {
+        attemptId: quiz.attemptId,
+        quizId: quiz.id,
+      });
+    },
+    [navigation],
+  );
+
+  const handleRetake = useCallback(
+    async (quiz: Quiz): Promise<void> => {
+      try {
+        await requestRetake.mutateAsync(quiz.id);
+        Toast.show({
+          type: 'success',
+          text1: 'Retake request sent',
+        });
+        void assignedQ.refetch();
+      } catch (err) {
+        Toast.show({
+          type: 'error',
+          text1: 'Failed to request retake',
+          text2: (err as { message?: string }).message,
+        });
+      }
+    },
+    [assignedQ, requestRetake],
   );
 
   const handleRefresh = useCallback(() => {
@@ -182,7 +242,13 @@ export default function QuizListScreen(): React.ReactElement {
           />
         }
         renderItem={({ item }) => (
-          <QuizCardListItem quiz={item} onPress={handleOpen} />
+          <QuizCardListItem
+            quiz={item}
+            onPress={handleOpen}
+            onReview={handleReview}
+            onRetake={(quiz) => void handleRetake(quiz)}
+            retaking={requestRetake.isPending}
+          />
         )}
         ListEmptyComponent={renderEmpty}
       />

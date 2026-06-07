@@ -35,12 +35,30 @@ function list(value: unknown): unknown[] {
 export async function getStudentDashboard(): Promise<AnalyticsDashboard> {
   const { data } = await api.get<unknown>('/api/analytics/student/dashboard');
   const dto = record(data);
+  const summary = record(dto.summary);
   return {
     title: text(dto.title) ?? text(dto.summary),
-    completionRate: number(dto.completionRate) ?? number(dto.completionPercentage),
-    accuracyRate: number(dto.accuracyRate) ?? number(dto.accuracy),
-    streakDays: number(dto.streakDays) ?? number(dto.currentStreak),
+    completionRate:
+      number(dto.completionRate) ??
+      number(dto.completionPercentage) ??
+      number(summary.completionRate) ??
+      number(summary.completionPercentage),
+    accuracyRate:
+      number(dto.accuracyRate) ??
+      number(dto.accuracy) ??
+      number(summary.accuracyRate) ??
+      number(summary.accuracy),
+    streakDays:
+      number(dto.streakDays) ??
+      number(dto.currentStreak) ??
+      number(summary.streakDays) ??
+      number(summary.currentStreak),
     focusMessage: text(dto.focusMessage) ?? text(dto.recommendation),
+    averageScore: number(dto.averageScore) ?? number(summary.averageScore),
+    totalQuizzes: number(dto.totalQuizzes) ?? number(summary.totalQuizzes),
+    weakTopicCount: number(dto.weakTopicCount) ?? number(summary.weakTopicCount),
+    activeErrorPatterns:
+      number(dto.activeErrorPatterns) ?? number(summary.activeErrorPatterns),
   };
 }
 

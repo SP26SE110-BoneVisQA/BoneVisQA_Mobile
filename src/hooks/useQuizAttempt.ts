@@ -141,13 +141,17 @@ function fromStartResult(result: StartQuizResult): PersistedAttempt {
   };
 }
 
-export function useQuizAttempt(quizId: string): UseQuizAttemptResult {
+export function useQuizAttempt(
+  quizId: string,
+  initialAttempt?: StartQuizResult,
+): UseQuizAttemptResult {
   const [attempt, setAttempt] = useState<PersistedAttempt | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<ApiError | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingWriteRef = useRef<Map<string, string[]>>(new Map());
+  const initialAttemptRef = useRef<StartQuizResult | undefined>(initialAttempt);
 
   // Initial load: hydrate from storage or start a new attempt
   useEffect(() => {
@@ -156,6 +160,16 @@ export function useQuizAttempt(quizId: string): UseQuizAttemptResult {
     async function bootstrap(): Promise<void> {
       setIsLoading(true);
       setError(null);
+      if (initialAttemptRef.current) {
+        const next = fromStartResult(initialAttemptRef.current);
+        if (!cancelled) {
+          setAttempt(next);
+          await persist(next);
+          setIsLoading(false);
+        }
+        initialAttemptRef.current = undefined;
+        return;
+      }
       const persisted = await loadPersisted(quizId);
       if (persisted && !cancelled) {
         setAttempt(persisted);

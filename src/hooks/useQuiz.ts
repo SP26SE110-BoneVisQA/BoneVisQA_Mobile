@@ -13,7 +13,9 @@ import type {
   Assignment,
   Attempt,
   GeneratedPracticeResult,
+  PracticeFromCasesDto,
   PracticeGenerateDto,
+  QuizCaseInput,
   ProgressSummary,
   Quiz,
   QuizListParams,
@@ -66,6 +68,13 @@ export function usePracticeList(): UseQueryResult<Quiz[], ApiError> {
   return useQuery<Quiz[], ApiError>({
     queryKey: quizKeys.practice(),
     queryFn: () => quizzesApi.getPracticeList(),
+  });
+}
+
+export function useQuizCases(): UseQueryResult<QuizCaseInput[], ApiError> {
+  return useQuery<QuizCaseInput[], ApiError>({
+    queryKey: ['quizzes', 'cases'],
+    queryFn: quizzesApi.listQuizCases,
   });
 }
 
@@ -153,6 +162,16 @@ export function useGeneratePractice(): UseMutationResult<
 > {
   return useMutation<GeneratedPracticeResult, ApiError, PracticeGenerateDto>({
     mutationFn: (dto) => quizzesApi.generatePractice(dto),
+  });
+}
+
+export function useGeneratePracticeFromCases(): UseMutationResult<
+  GeneratedPracticeResult,
+  ApiError,
+  PracticeFromCasesDto
+> {
+  return useMutation<GeneratedPracticeResult, ApiError, PracticeFromCasesDto>({
+    mutationFn: (dto) => quizzesApi.generatePracticeFromCases(dto),
   });
 }
 

@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Minus, Plus, Sparkles, Wand2 } from 'lucide-react-native';
+import { Minus, Plus, Radio, Sparkles, Wand2 } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
 
 import Screen from '../../../components/common/Screen';
@@ -13,12 +13,18 @@ import EmptyState from '../../../components/common/EmptyState';
 import Loading from '../../../components/common/Loading';
 import QuizCardListItem from '../../../components/quiz/QuizCardListItem';
 import {
+  useGeneratePracticeFromCases,
   useGeneratePractice,
   usePracticeList,
+  useQuizCases,
   useSavePractice,
 } from '../../../hooks/useQuiz';
 import type { QuizStackParamList } from '../../../navigation/types';
-import type { PracticeDifficulty, Quiz } from '../../../types/quiz';
+import type {
+  GeneratedPracticeResult,
+  PracticeDifficulty,
+  Quiz,
+} from '../../../types/quiz';
 
 type NavProp = NativeStackNavigationProp<QuizStackParamList, 'PracticeMode'>;
 
@@ -35,6 +41,21 @@ const DIFFICULTIES: ReadonlyArray<DifficultyDef> = [
 
 const MIN_COUNT = 5;
 const MAX_COUNT = 30;
+const CASE_COUNT_LIMIT = 3;
+
+type GenerateMode = 'topic' | 'cases';
+
+function buildInitialAttempt(result: GeneratedPracticeResult) {
+  return {
+    id: result.attemptId,
+    quizId: result.quizId,
+    quizTitle: result.title,
+    startedAt: new Date().toISOString(),
+    status: 'in_progress' as const,
+    answers: [],
+    questions: result.questions,
+  };
+}
 
 export default function PracticeModeScreen(): React.ReactElement {
   const navigation = useNavigation<NavProp>();
@@ -42,38 +63,81 @@ export default function PracticeModeScreen(): React.ReactElement {
   const [difficulty, setDifficulty] = useState<PracticeDifficulty>('medium');
   const [count, setCount] = useState<number>(10);
   const [topicError, setTopicError] = useState<string | undefined>(undefined);
+  const [mode, setMode] = useState<GenerateMode>('topic');
+  const [selectedCaseIds, setSelectedCaseIds] = useState<string[]>([]);
 
   const generate = useGeneratePractice();
+  const generateFromCases = useGeneratePracticeFromCases();
   const save = useSavePractice();
   const practiceList = usePracticeList();
+  const quizCases = useQuizCases();
 
   const existingPractice: Quiz[] = useMemo(
     () => practiceList.data ?? [],
     [practiceList.data],
   );
+  const caseOptions = useMemo(
+    () => (quizCases.data ?? []).filter((item) => item.caseId).slice(0, 12),
+    [quizCases.data],
+  );
+  const selectedCases = useMemo(
+    () =>
+      caseOptions.filter(
+        (item) => item.caseId && selectedCaseIds.includes(item.caseId),
+      ),
+    [caseOptions, selectedCaseIds],
+  );
+
+  const toggleCase = useCallback((caseId: string): void => {
+    setSelectedCaseIds((prev) => {
+      if (prev.includes(caseId)) {
+        return prev.filter((id) => id !== caseId);
+      }
+      return [caseId, ...prev].slice(0, CASE_COUNT_LIMIT);
+    });
+  }, []);
 
   const handleSubmit = useCallback(async (): Promise<void> => {
     const trimmed = topic.trim();
-    if (trimmed.length === 0) {
+    if (mode === 'topic' && trimmed.length === 0) {
       setTopicError('Please enter a topic');
+      return;
+    }
+    if (mode === 'cases' && selectedCases.length === 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Choose at least one case',
+      });
       return;
     }
     setTopicError(undefined);
     try {
-      const result = await generate.mutateAsync({
-        topic: trimmed,
-        difficulty,
-        count,
-      });
-      // Best-effort save in background
-      save
-        .mutateAsync({ topic: trimmed, difficulty, count })
-        .catch(() => undefined);
+      const result =
+        mode === 'cases'
+          ? await generateFromCases.mutateAsync({
+              cases: selectedCases,
+              difficulty,
+              count,
+            })
+          : await generate.mutateAsync({
+              topic: trimmed,
+              difficulty,
+              count,
+            });
+      if (mode === 'topic') {
+        save
+          .mutateAsync({ topic: trimmed, difficulty, count })
+          .catch(() => undefined);
+      }
       Toast.show({
         type: 'success',
         text1: 'Practice quiz created',
       });
-      navigation.replace('QuizPlay', { quizId: result.quizId });
+      navigation.replace('QuizPlay', {
+        quizId: result.quizId,
+        attemptId: result.attemptId,
+        initialAttempt: buildInitialAttempt(result),
+      });
     } catch (err) {
       Toast.show({
         type: 'error',
@@ -81,7 +145,17 @@ export default function PracticeModeScreen(): React.ReactElement {
         text2: (err as { message?: string }).message,
       });
     }
-  }, [count, difficulty, generate, navigation, save, topic]);
+  }, [
+    count,
+    difficulty,
+    generate,
+    generateFromCases,
+    mode,
+    navigation,
+    save,
+    selectedCases,
+    topic,
+  ]);
 
   const handleOpenSaved = useCallback(
     (quiz: Quiz): void => {
@@ -107,10 +181,44 @@ export default function PracticeModeScreen(): React.ReactElement {
           </View>
         </View>
 
+        <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mt-1 mb-1.5 ml-1">
+          Generate from
+        </Text>
+        <View className="flex-row bg-slate-100 dark:bg-slate-800 rounded-2xl p-1 mb-4">
+          {[
+            { key: 'topic' as const, label: 'Topic' },
+            { key: 'cases' as const, label: 'Cases' },
+          ].map((item) => {
+            const selected = mode === item.key;
+            return (
+              <Pressable
+                key={item.key}
+                onPress={() => setMode(item.key)}
+                className={[
+                  'flex-1 items-center py-2 rounded-xl',
+                  selected ? 'bg-white dark:bg-slate-700' : '',
+                ].join(' ')}
+              >
+                <Text
+                  className={[
+                    'text-sm font-semibold',
+                    selected
+                      ? 'text-slate-900 dark:text-white'
+                      : 'text-slate-500 dark:text-slate-400',
+                  ].join(' ')}
+                >
+                  {item.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
         <Input
           label="Theme"
           placeholder="Example: Forearm fracture"
           value={topic}
+          editable={mode === 'topic'}
           onChangeText={(text) => {
             setTopic(text);
             if (topicError) {
@@ -119,6 +227,47 @@ export default function PracticeModeScreen(): React.ReactElement {
           }}
           error={topicError}
         />
+
+        {mode === 'cases' ? (
+          <View className="mt-4">
+            <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 ml-1">
+              Select cases ({selectedCaseIds.length}/{CASE_COUNT_LIMIT})
+            </Text>
+            {quizCases.isLoading ? (
+              <Loading text="Loading cases..." />
+            ) : caseOptions.length === 0 ? (
+              <EmptyState
+                icon={<Radio size={28} color="#94a3b8" />}
+                title="No cases available"
+                subtitle="Case-based generation will appear when cases are available."
+              />
+            ) : (
+              caseOptions.map((item) => {
+                const caseId = item.caseId ?? '';
+                const selected = selectedCaseIds.includes(caseId);
+                return (
+                  <Pressable
+                    key={caseId}
+                    onPress={() => toggleCase(caseId)}
+                    className={[
+                      'p-3 rounded-2xl border mb-2',
+                      selected
+                        ? 'bg-primary/10 border-primary'
+                        : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+                    ].join(' ')}
+                  >
+                    <Text className="text-sm font-semibold text-slate-900 dark:text-white" numberOfLines={1}>
+                      {item.caseTitle ?? 'Clinical case'}
+                    </Text>
+                    <Text className="text-xs text-slate-500 mt-1" numberOfLines={2}>
+                      {item.caseDescription ?? item.keyFindings ?? 'No description'}
+                    </Text>
+                  </Pressable>
+                );
+              })
+            )}
+          </View>
+        ) : null}
 
         <Text className="text-sm font-medium text-slate-700 dark:text-slate-300 mt-4 mb-1.5 ml-1">
           Difficulty
@@ -178,7 +327,7 @@ export default function PracticeModeScreen(): React.ReactElement {
           <Button
             label="Create practice quiz"
             onPress={() => void handleSubmit()}
-            loading={generate.isPending}
+            loading={generate.isPending || generateFromCases.isPending}
             leftIcon={<Sparkles size={16} color="#ffffff" />}
             fullWidth
           />

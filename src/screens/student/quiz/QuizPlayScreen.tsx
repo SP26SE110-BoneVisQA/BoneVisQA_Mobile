@@ -21,10 +21,20 @@ import type { QuizStackParamList } from '../../../navigation/types';
 type NavProp = NativeStackNavigationProp<QuizStackParamList, 'QuizPlay'>;
 type RouteType = RouteProp<QuizStackParamList, 'QuizPlay'>;
 
+const ASSIGNMENT_NOT_OPEN_MESSAGE = "The assignment hasn't been opened yet.";
+
+function isAssignmentNotOpenError(message: string | undefined): boolean {
+  const normalized = (message ?? '').toLowerCase();
+  return (
+    normalized.includes("hasn't been opened yet") ||
+    normalized.includes('has not been opened yet')
+  );
+}
+
 export default function QuizPlayScreen(): React.ReactElement {
   const navigation = useNavigation<NavProp>();
   const route = useRoute<RouteType>();
-  const { quizId } = route.params;
+  const { quizId, initialAttempt } = route.params;
   const {
     isLoading,
     isSubmitting,
@@ -39,10 +49,25 @@ export default function QuizPlayScreen(): React.ReactElement {
     setAnswer,
     submit,
     discard,
-  } = useQuizAttempt(quizId);
+  } = useQuizAttempt(quizId, initialAttempt);
 
   const [confirmVisible, setConfirmVisible] = useState<boolean>(false);
   const submitLockRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!isAssignmentNotOpenError(error?.message)) {
+      return;
+    }
+    Toast.show({
+      type: 'info',
+      text1: ASSIGNMENT_NOT_OPEN_MESSAGE,
+    });
+    if (navigation.canGoBack()) {
+      navigation.goBack();
+    } else {
+      navigation.replace('QuizList');
+    }
+  }, [error, navigation]);
 
   // Intercept back nav while in progress
   useEffect(() => {
@@ -108,7 +133,10 @@ export default function QuizPlayScreen(): React.ReactElement {
             ? `Your score: ${result.score.toFixed(1)}`
             : 'Attempt recorded',
       });
-      navigation.replace('QuizReview', { attemptId: result.id });
+      navigation.replace('QuizReview', {
+        attemptId: result.id,
+        quizId: result.quizId || quizId,
+      });
     } catch (err) {
       Toast.show({
         type: 'error',
@@ -146,6 +174,14 @@ export default function QuizPlayScreen(): React.ReactElement {
   }, [handleSubmit, isSubmitting]);
 
   if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
+        <Loading text="Preparing attempt..." />
+      </SafeAreaView>
+    );
+  }
+
+  if (isAssignmentNotOpenError(error?.message)) {
     return (
       <SafeAreaView className="flex-1 bg-slate-50 dark:bg-slate-900">
         <Loading text="Preparing attempt..." />

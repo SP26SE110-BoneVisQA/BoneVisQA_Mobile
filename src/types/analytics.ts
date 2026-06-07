@@ -4,6 +4,10 @@ export interface AnalyticsDashboard {
   accuracyRate?: number;
   streakDays?: number;
   focusMessage?: string;
+  averageScore?: number;
+  totalQuizzes?: number;
+  weakTopicCount?: number;
+  activeErrorPatterns?: number;
 }
 
 export interface StudentCompetency {

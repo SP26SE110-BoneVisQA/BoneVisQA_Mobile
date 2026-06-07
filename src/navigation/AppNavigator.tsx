@@ -2,7 +2,6 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
-  Bell,
   BookOpen,
   ClipboardList,
   FileText,
@@ -49,7 +48,6 @@ import type {
   AssignmentsStackParamList,
   CasesStackParamList,
   HomeStackParamList,
-  NotificationsStackParamList,
   ProfileStackParamList,
   QuizStackParamList,
   VisualQaStackParamList,
@@ -71,6 +69,11 @@ function HomeStackNavigator(): React.ReactElement {
         name="Announcements"
         component={AnnouncementsScreen}
         options={{ headerShown: true, title: 'General announcements' }}
+      />
+      <HomeStack.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{ headerShown: true, title: 'Notifications' }}
       />
     </HomeStack.Navigator>
   );
@@ -184,19 +187,6 @@ function VisualQaStackNavigator(): React.ReactElement {
   );
 }
 
-const NotificationsStack =
-  createNativeStackNavigator<NotificationsStackParamList>();
-function NotificationsStackNavigator(): React.ReactElement {
-  return (
-    <NotificationsStack.Navigator screenOptions={{ headerShown: false }}>
-      <NotificationsStack.Screen
-        name="Notifications"
-        component={NotificationsScreen}
-      />
-    </NotificationsStack.Navigator>
-  );
-}
-
 const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 function ProfileStackNavigator(): React.ReactElement {
   return (
@@ -269,22 +259,24 @@ export default function AppNavigator(): React.ReactElement {
         }}
       />
       <Tab.Screen
-        name="AssignmentsTab"
-        component={AssignmentsStackNavigator}
-        options={{
-          title: 'Assignments',
-          tabBarIcon: ({ color, size }) => (
-            <ClipboardList color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="CasesTab"
         component={CasesStackNavigator}
         options={{
           title: 'Clinical cases',
           tabBarIcon: ({ color, size }) => (
             <FileText color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AssignmentsTab"
+        component={AssignmentsStackNavigator}
+        options={{
+          title: 'Assignments',
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: 'none' },
+          tabBarIcon: ({ color, size }) => (
+            <ClipboardList color={color} size={size} />
           ),
         }}
       />
@@ -296,14 +288,6 @@ export default function AppNavigator(): React.ReactElement {
           tabBarIcon: ({ color, size }) => (
             <MessageCircle color={color} size={size} />
           ),
-        }}
-      />
-      <Tab.Screen
-        name="NotificationsTab"
-        component={NotificationsStackNavigator}
-        options={{
-          title: 'Notifications',
-          tabBarIcon: ({ color, size }) => <Bell color={color} size={size} />,
         }}
       />
       <Tab.Screen

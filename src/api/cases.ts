@@ -79,13 +79,20 @@ function resolveImageUrl(value?: string | null): string | undefined {
     return undefined;
   }
   const normalized = raw.replace(/\\/g, '/');
+  const apiBase = API_BASE_URL.replace(/\/+$/, '');
+  const localServerMatch = normalized.match(
+    /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?(\/.*)$/i,
+  );
+  if (localServerMatch) {
+    return `${apiBase}${localServerMatch[1]}`;
+  }
   if (/^(https?:|file:|data:|blob:)/i.test(normalized)) {
     return normalized;
   }
   if (normalized.startsWith('//')) {
     return `https:${normalized}`;
   }
-  return `${API_BASE_URL.replace(/\/+$/, '')}/${normalized.replace(/^\/+/, '')}`;
+  return `${apiBase}/${normalized.replace(/^\/+/, '')}`;
 }
 
 function mapListItemToCase(dto: CaseListItemDto): Case {
@@ -184,6 +191,15 @@ export async function getCatalog(
         },
       },
     );
+    return data.map(mapListItemToCase);
+  } catch (error) {
+    throw await handleApiError(error);
+  }
+}
+
+export async function listCases(): Promise<Case[]> {
+  try {
+    const { data } = await api.get<CaseListItemDto[]>('/api/student/cases');
     return data.map(mapListItemToCase);
   } catch (error) {
     throw await handleApiError(error);
